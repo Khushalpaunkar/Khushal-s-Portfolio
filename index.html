@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khushal's Portfolio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="style.css">
+</head> 
+<body>
+
+<!-- Scroll Progress Bar -->
+<div id="scroll-progress"></div>
+ 
+<!-- Back to Top Button -->
+<button id="back-to-top" aria-label="Back to top">
+  <i class="fas fa-arrow-up"></i>
+</button>
+
+<header class="header">
+    <nav class="navbar">
+        <div>
+          <h1 class="navheading">KHUSHAL'S PORTFOLIO</h1>
+        </div>
+        <div class="navul" id="navul">
+            <div class="navlist">
+              <a href="#home" class="nav-link">HOME</a>
+              <a href="#skill" class="nav-link">SKILL</a>
+              <a href="#education" class="nav-link">EDUCATION</a>
+              <a href="#projects" class="nav-link">PROJECT</a>
+              <a href="#contact" class="nav-link">CONTACT</a>
+            </div>
+        </div>
+        <div class="nav-right">
+          <div class="menu-icon" id="menu-btn" aria-label="Toggle menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+    </nav>
+</header>
+
+<main>
+    <!-- HOME -->
+    <section class="home" id="home">
+        <img src="asset/khushalimg.jpg" alt="Khushal Paunkar" class="my_img">
+        <div class="home_text">
+            <h2>Hi, I'm</h2>
+            <h1>KHUSHAL PAUNKAR</h1>
+            <h3>I am a &nbsp;<span id="role"></span><span class="cursor"> </span></h3>
+            <div class="home-desc">
+                <p>I am a Computer Science student who enjoys learning new technologies.</p>
+                <p>I am motivated, adaptable, and always eager to take on new challenges.</p>
+                <p>With a strong interest in problem-solving and continuous learning.</p>
+                <p>I aim to build meaningful projects and grow my skills every day.</p>
+            </div>
+            <div class="button">
+                <a href="https://github.com/Khushalpaunkar" class="btn-nav" target="_blank"><i class="fab fa-github"></i> Github</a>
+                <a href="khushalresume.pdf" class="btn-nav" target="_blank" ><i class="fas fa-file-alt"></i> Resume</a>
+                <a href="#contact" class="btn-nav"><i class="fas fa-envelope"></i> Contact</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section class="skill" id="skill">
+        <h2>SKILL &amp; TECHNOLOGIES</h2>
+        <p>A comprehensive toolkit of modern technologies and frameworks I use to bring ideas to life</p>
+        <div class="skill-container">
+            <div id="frontend" class="skill_box">
+                <h3><i class="fas fa-paint-brush"></i> FRONTEND</h3>
+                <ul>
+                    <li><i class="fab fa-html5"></i> HTML</li>
+                    <li><i class="fab fa-css3-alt"></i> CSS</li>
+                    <li><i class="fab fa-js"></i> JavaScript</li>
+                    <li><i class="fab fa-bootstrap"></i> Bootstrap</li>
+                </ul>
+            </div>
+            <div id="backend" class="skill_box">
+                <h3><i class="fas fa-server"></i> BACKEND</h3>
+                <ul>
+                    <li><i class="fab fa-node-js"></i> Node.js</li>
+                    <li><i class="fas fa-server"></i> Express.js</li>
+                    <li><i class="fas fa-database"></i> MongoDB</li>
+                    <li><i class="fas fa-database"></i> MySQL</li>
+                </ul>
+            </div>
+            <div id="tools" class="skill_box">
+                <h3><i class="fas fa-tools"></i> TOOLS</h3>
+                <ul>
+                    <li><i class="fab fa-git-alt"></i> Git &amp; GitHub</li>
+                    <li><i class="fas fa-code"></i> VS Code</li>
+                    <li><i class="fas fa-bolt"></i> Postman</li>
+                    <li><i class="fab fa-chrome"></i> Chrome</li>
+                </ul>
+            </div>
+            <div id="programming_language" class="skill_box">
+                <h3><i class="fas fa-code"></i> LANGUAGES</h3>
+                <ul>
+                    <li><i class="fab fa-c"></i> C</li>
+                    <li><i class="fab fa-python"></i> Python</li>
+                    <li><i class="fab fa-java"></i> Java</li>
+                    <li><i class="fab fa-js"></i> JavaScript</li>
+                </ul>
+            </div>
+        </div>
+        <h3 id="skill_line">Driven by curiosity, powered by technology, focused on growth.</h3>
+    </section>
+
+    <!-- PROJECTS -->
+    <section class="projects" id="projects">
+        <h2>PROJECTS</h2>
+        <p class="projects-sub">A showcase of my recent work and personal projects that demonstrate my skills and passion for development</p>
+
+        <div class="major-project">
+            <div class="major-img">
+                <img src="asset/e-commerence-skill.jpg" alt="E-Commerce Project">
+            </div>
+            <div class="major-content">
+                <span class="project-tag">Major Project</span>
+                <h3>E-Commerce Web Application</h3>
+                <p>A full-stack e-commerce platform featuring authentication, product management, cart system and secure checkout.</p>
+                <div class="tech-stack">
+                    <span>HTML</span><span>CSS</span><span>JavaScript</span>
+                    <span>Node.js</span><span>Express</span><span>MongoDB</span>
+                </div>
+                <span class="project-date">Jun-2025 to Feb-2026</span>
+                <div class="project-links">
+                    <a href="#" class="btn-outline"><i class="fab fa-github"></i> GitHub</a>
+                    <a href="#" class="btn-fill"><i class="fas fa-external-link-alt"></i> Live Demo</a>
+                </div>
+            </div>
+        </div>
+        <div class="view-another"><a href="">View Another →</a></div>
+
+        <p class="minor-title">Hands-on mini projects built while exploring new technologies and strengthening core development skills.</p>
+        <div class="minor-projects">
+            <div class="project-card">
+                <img src="asset/rondom-joke-generator.png" alt="Random Joke Generator">
+                <div class="card-content">
+                    <h4>Random Joke Generator</h4>
+                    <p>Fun web app that fetches and displays random jokes using API.</p>
+                    <div class="tech-stack small"><span>HTML</span><span>CSS</span><span>JavaScript</span></div>
+                    <a href="https://github.com/Khushalpaunkar/Random-joke-generator" class="card-link" target="_blank">GitHub →</a>
+                </div>
+            </div>
+            <div class="project-card">
+                <img src="asset/lost&found.png" alt="Lost & Found">
+                <div class="card-content">
+                    <h4>Lost &amp; Found</h4>
+                    <p>A smart Lost and Found management system that connects item finders and owners on campus.</p>
+                    <div class="tech-stack small"><span>HTML</span><span>CSS</span><span>JavaScript</span></div>
+                    <a href="https://github.com/chaitanyakamdi/Project-4thSem" class="card-link" target="_blank">GitHub →</a>
+                </div>
+            </div>
+            <div class="project-card">
+                <img src="asset/portfolio.png" alt="Portfolio">
+                <div class="card-content">
+                    <h4>Portfolio Website</h4>
+                    <p>A visually engaging portfolio website reflecting my skills, projects, and passion for development.</p>
+                    <div class="tech-stack small"><span>HTML</span><span>CSS</span><span>JS</span></div>
+                    <a href="#" class="card-link">GitHub →</a>
+                </div>
+            </div>
+        </div>
+        <div class="view-next"><a href="https://github.com/Khushalpaunkar" target="_blank">View Next →</a></div>
+    </section>
+
+    <!-- EDUCATION -->
+    <section class="education" id="education">
+        <h2>EDUCATION &amp; ACHIEVEMENTS</h2>
+        <div class="edu-timeline">
+            <div class="edu-item">
+                <img src="asset/JDlogo.png" alt="JD College" class="edu-logo">
+                <div class="edu-content">
+                    <h3>JD COLLEGE OF ENGINEERING AND MANAGEMENT, NAGPUR</h3>
+                    <p>Bachelor of Technology – BTech, Computer Science and Engineering</p>
+                    <span>2024 – Present</span><br>
+                    <span>CGPA: 8.1</span>
+                    <p>Pursuing B.Tech in CSE at JD College, Nagpur. Completed 3 semesters with a CGPA of 8.10. Courses include Data Structures, OOP, DBMS, OS, and Computer Networks.</p>
+                </div>
+            </div>
+            <div class="edu-item">
+                <img src="asset/spmlogo.jpeg" alt="SPM School" class="edu-logo">
+                <div class="edu-content">
+                    <h3>SPM HIGH SCHOOL AND JR. COLLEGE, WANI</h3>
+                    <span>(XII)</span><br><br>
+                    <span>2022 – 2024</span><br>
+                    <span>Grade: 63.17%</span>
+                    <p>Completed class 12 studying Science with Physics, Chemistry, Maths and Information Technology.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="contact" id="contact">
+        <h2>GET IN TOUCH</h2>
+        <p>Have a project in mind or just want to connect? Feel free to reach out — I'd love to hear from you.</p>
+        <div class="contact-container">
+            <form class="contact-form" id="contact-form">
+                <h3>Send a Message</h3>
+                <label>Name</label>
+                <input type="text" name="user_name" placeholder="Your Name" required>
+                <label>Email</label>
+                <input type="email" name="user_email" placeholder="Your Email" required>
+                <label>Subject</label>
+                <textarea name="user_subject" placeholder="Your Subject" rows="2"></textarea>
+                <label>Message</label>
+                <textarea name="user_message" placeholder="Your Message" rows="4"></textarea>
+                <button type="submit" class="send-btn">
+                    <span class="btn-label">Send Message ➜</span>
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <h2 class="footer-name">KHUSHAL PAUNKAR</h2>
+        <div class="footer-center">
+            <nav class="footer-nav">
+                <a href="#home">HOME</a>
+                <a href="#skill">SKILL</a>
+                <a href="#projects">PROJECTS</a>
+                <a href="#education">EDUCATION</a>
+                <a href="#contact">CONTACT</a>
+            </nav>
+        </div>
+        <div class="footer-social">
+            <a href="https://github.com/Khushalpaunkar" aria-label="GitHub" target="_blank"><i class="fa-brands fa-github"></i></a>
+            <a href="https://www.instagram.com/_khushal.089" aria-label="Instagram" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://www.linkedin.com/in/khushalpaunkar" aria-label="LinkedIn" target="_blank"><i class="fa-brands fa-linkedin-in"></i></a>
+            <a href="/cdn-cgi/l/email-protection#02696a77716a636e7263776c696370353b42656f636b6e2c616d6f" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Khushal Paunkar. All rights reserved.</p>
+        </div>
+    </footer>
+</main>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"> </script>
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script src="contact.js"></script>
+<script src="app.js"></script>
+<script src="menu.js"></script>
+</body>
+</html>
