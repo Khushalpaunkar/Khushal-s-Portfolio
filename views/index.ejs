@@ -1,0 +1,527 @@
+<%
+  /* Contact/social details are editable from the dashboard. When the settings
+     document has never been saved (or this render has no middleware locals)
+     the bundled defaults below apply; an explicitly cleared field simply hides
+     that link. */
+  var s = (typeof siteSettings !== 'undefined' && siteSettings && Object.keys(siteSettings).length)
+    ? siteSettings
+    : {
+        contactEmail: 'khushalpaunkar79@gmail.com',
+        githubUrl: 'https://github.com/Khushalpaunkar',
+        linkedinUrl: 'https://www.linkedin.com/in/khushalpaunkar',
+        instagramUrl: 'https://www.instagram.com/_khushal.089',
+        resumeUrl: '/asset/khushal-resume.pdf',
+      };
+  var sEmail = s.contactEmail;
+  var sGithub = s.githubUrl;
+  var sLinkedin = s.linkedinUrl;
+  var sInstagram = s.instagramUrl;
+  var sResume = s.resumeUrl;
+  var sGithubDisplay = sGithub ? sGithub.replace(/^https?:\/\//, '') : '';
+%>
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <%- include('partials/head') %>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<%- include('partials/background') %>
+<%- include('partials/nav') %>
+
+<main id="main">
+
+  <!-- ============================================================
+       HERO
+       ============================================================ -->
+  <section class="hero section" id="home">
+    <div class="container">
+      <div class="hero__grid">
+
+        <div class="hero__content">
+          
+
+          <h1 class="hero__title">
+            <span>Building digital</span>
+            <span class="grad">experiences.</span>
+            <span>Solving real problems.</span>
+          </h1>
+
+          <p class="hero__name">Khushal Paunkar</p>
+
+          <p class="hero__role">
+            <span>Computer Science Student &middot; Full-Stack Developer</span>
+          </p>
+          <p class="hero__role">
+            <b id="role">Full-Stack Developer</b><i class="hero__caret" aria-hidden="true"></i>
+          </p>
+
+          <p class="hero__text">
+            I build complete web applications with the MERN stack and turn ideas
+            into working products. Currently exploring how AI can be applied to
+            solve practical, real-world problems.
+          </p>
+
+          <div class="hero__cta">
+            <a href="#projects" class="btn btn--primary">
+              <i class="fas fa-layer-group"></i> Explore Projects
+            </a>
+            <% if (sResume) { %>
+            <a href="<%= sResume %>" class="btn btn--ghost" target="_blank" rel="noopener">
+              <i class="fas fa-file-arrow-down"></i> Download Resume
+            </a>
+            <% } %>
+            <% if (sGithub) { %>
+            <a href="<%= sGithub %>" class="btn btn--ghost" target="_blank" rel="noopener">
+              <i class="fa-brands fa-github"></i> GitHub
+            </a>
+            <% } %>
+          </div>
+
+          <div class="hero__meta">
+            <span><i class="fas fa-graduation-cap"></i> B.Tech CSE &middot; 3rd Year</span>
+            <span><i class="fas fa-code"></i> MERN Stack</span>
+            <span><i class="fas fa-robot"></i> AI Builder</span>
+          </div>
+        </div>
+
+        <div class="hero__visual">
+          <div class="frame">
+            <div class="frame__bar" aria-hidden="true">
+              <i class="frame__dot"></i><i class="frame__dot"></i><i class="frame__dot"></i>
+              <span class="frame__file">khushal.config.js</span>
+            </div>
+            <div class="frame__media">
+              <img src="/asset/images/khushalNewImg.png"
+                   alt="Khushal Paunkar, full-stack developer"
+                   width="758" height="917"
+                   fetchpriority="high" decoding="async">
+            </div>
+          </div>
+
+          <span class="badge-float badge-float--1"><i class="fab fa-react"></i> React</span>
+          <span class="badge-float badge-float--2"><i class="fab fa-node-js"></i> Node.js</span>
+          <span class="badge-float badge-float--3"><i class="fab fa-js"></i> JavaScript</span>
+          <span class="badge-float badge-float--4"><i class="fas fa-database"></i> MongoDB</span>
+          <span class="badge-float badge-float--5"><i class="fab fa-python"></i> Python</span>
+          <span class="badge-float badge-float--6"><i class="fab fa-git-alt"></i> Git</span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       ABOUT
+       ============================================================ -->
+    <section class="section" id="about">
+    <div class="container">
+      <div class="section-head">
+        <p class="section-head__label mono">About</p>
+        <h2 class="section-head__title">Developer identity &amp; current focus</h2>
+      </div>
+
+      <div class="about__grid">
+        <div class="about__body" data-reveal>
+          <p class="about__lead">
+            I'm a Computer Science student at JD College of Engineering and
+            Management, Nagpur, currently in my third year of B.Tech.
+          </p>
+          <p>
+            I enjoy working across the stack &mdash; designing interfaces,
+            building REST APIs, and wiring up databases &mdash; because seeing an
+            idea become a working, usable product is the part I find rewarding.
+          </p>
+          <p>
+            Alongside my degree I'm drawn to applied machine learning and AI:
+            building tools that use models to do something genuinely useful rather
+            than adding AI as a label.
+          </p>
+          <p>
+            I'm motivated, adaptable, and always eager to take on new challenges,
+            with a strong interest in problem solving and continuous learning.
+          </p>
+
+          <blockquote class="about__quote">
+            "Driven by curiosity, powered by technology, focused on growth."
+            <footer>Development philosophy</footer>
+          </blockquote>
+        </div>
+
+        <div class="about__cards" data-reveal>
+          <div class="info-card">
+            <span class="info-card__icon"><i class="fas fa-graduation-cap"></i></span>
+            <div>
+              <p class="info-card__label">Education</p>
+              <p class="info-card__value">B.Tech CSE &middot; 3rd Year <span>&mdash; JD College, Nagpur</span></p>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <span class="info-card__icon"><i class="fas fa-layer-group"></i></span>
+            <div>
+              <p class="info-card__label">Technical focus</p>
+              <p class="info-card__value">MERN stack <span>&mdash; MongoDB, Express, React, Node</span></p>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <span class="info-card__icon"><i class="fas fa-brain"></i></span>
+            <div>
+              <p class="info-card__label">Interests</p>
+              <p class="info-card__value">AI-based applications <span>&mdash; DSA, Core Java, problem solving</span></p>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <span class="info-card__icon"><i class="fas fa-arrow-trend-up"></i></span>
+            <div>
+              <p class="info-card__label">Direction</p>
+              <p class="info-card__value">Full-stack development <span>&mdash; with applied ML</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       SKILLS
+       ============================================================ -->
+    <section class="section" id="skills">
+    <div class="container">
+      <div class="section-head section-head--center">
+        <p class="section-head__label mono">Skills</p>
+        <h2 class="section-head__title">Technology I work with</h2>
+        <p class="section-head__sub">
+          A practical toolkit spanning front-end interfaces, back-end services,
+          data, programming and the tools that hold it all together.
+        </p>
+      </div>
+
+      <div class="skills__grid">
+
+        <article class="skill-panel" data-reveal>
+          <div class="skill-panel__head">
+            <span class="skill-panel__icon"><i class="fas fa-paint-brush"></i></span>
+            <h3 class="skill-panel__title">Frontend</h3>
+            <span class="skill-panel__count">04</span>
+          </div>
+          <ul class="skill-panel__list">
+            <li class="chip"><i class="fab fa-html5"></i> HTML</li>
+            <li class="chip"><i class="fab fa-css3-alt"></i> CSS</li>
+            <li class="chip"><i class="fab fa-js"></i> JavaScript</li>
+            <li class="chip"><i class="fab fa-bootstrap"></i> Bootstrap</li>
+          </ul>
+        </article>
+
+        <article class="skill-panel" data-reveal>
+          <div class="skill-panel__head">
+            <span class="skill-panel__icon"><i class="fas fa-server"></i></span>
+            <h3 class="skill-panel__title">Backend</h3>
+            <span class="skill-panel__count">03</span>
+          </div>
+          <ul class="skill-panel__list">
+            <li class="chip"><i class="fab fa-node-js"></i> Node.js</li>
+            <li class="chip"><i class="fas fa-server"></i> Express.js</li>
+            <li class="chip"><i class="fas fa-code-branch"></i> REST APIs</li>
+          </ul>
+        </article>
+
+        <article class="skill-panel" data-reveal>
+          <div class="skill-panel__head">
+            <span class="skill-panel__icon"><i class="fas fa-database"></i></span>
+            <h3 class="skill-panel__title">Database</h3>
+            <span class="skill-panel__count">02</span>
+          </div>
+          <ul class="skill-panel__list">
+            <li class="chip"><i class="fas fa-leaf"></i> MongoDB</li>
+            <li class="chip"><i class="fas fa-database"></i> MySQL</li>
+          </ul>
+        </article>
+
+        <article class="skill-panel" data-reveal>
+          <div class="skill-panel__head">
+            <span class="skill-panel__icon"><i class="fas fa-code"></i></span>
+            <h3 class="skill-panel__title">Programming</h3>
+            <span class="skill-panel__count">04</span>
+          </div>
+          <ul class="skill-panel__list">
+            <li class="chip"><i class="fa-solid fa-c"></i> C</li>
+            <li class="chip"><i class="fab fa-python"></i> Python</li>
+            <li class="chip"><i class="fab fa-java"></i> Java</li>
+            <li class="chip"><i class="fab fa-js"></i> JavaScript</li>
+          </ul>
+        </article>
+
+        <article class="skill-panel" data-reveal>
+          <div class="skill-panel__head">
+            <span class="skill-panel__icon"><i class="fas fa-tools"></i></span>
+            <h3 class="skill-panel__title">Tools</h3>
+            <span class="skill-panel__count">05</span>
+          </div>
+          <ul class="skill-panel__list">
+            <li class="chip"><i class="fab fa-git-alt"></i> Git</li>
+            <li class="chip"><i class="fab fa-github"></i> GitHub</li>
+            <li class="chip"><i class="fas fa-code"></i> VS Code</li>
+            <li class="chip"><i class="fas fa-bolt"></i> Postman</li>
+            <li class="chip"><i class="fab fa-chrome"></i> Chrome</li>
+          </ul>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       PROJECTS
+       Projects come from services/projectService.js, which reads MongoDB when
+       it is reachable and the bundled seed data when it is not.
+       No URL is invented: a missing link renders no button at all.
+       ============================================================ -->
+    <section class="section" id="projects">
+    <div class="container">
+      <div class="section-head">
+        <p class="section-head__label mono">Projects</p>
+        <h2 class="section-head__title">Featured work</h2>
+        <p class="section-head__sub">
+          Two projects I am proud of, followed by smaller work built while
+          learning and exploring.
+        </p>
+      </div>
+
+      <% if (projects.featured.length) { %>
+        <% projects.featured.forEach(function (project, index) { %>
+          <%- include('partials/project-featured', { project: project, index: index, techIcon: techIcon, placeholderIcon: placeholderIcon }) %>
+        <% }); %>
+      <% } %>
+
+      <% if (projects.others.length) { %>
+        <div class="projects__divider">
+          <span>More projects</span>
+        </div>
+
+        <div class="pgrid">
+          <% projects.others.forEach(function (project) { %>
+            <%- include('partials/project-card', { project: project, techIcon: techIcon, placeholderIcon: placeholderIcon }) %>
+          <% }); %>
+        </div>
+      <% } %>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       EDUCATION
+       ============================================================ -->
+    <section class="section" id="education">
+    <div class="container">
+      <div class="section-head">
+        <p class="section-head__label mono">Education</p>
+        <h2 class="section-head__title">Academic journey</h2>
+      </div>
+
+      <div class="timeline" id="timeline">
+        <div class="timeline__rail" aria-hidden="true"></div>
+
+        <div class="tl-item" data-reveal>
+          <span class="tl-item__node" aria-hidden="true"></span>
+          <div class="tl-item__card">
+            <img class="tl-item__logo" src="/asset/images/jd-logo.png"
+                 alt="JD College of Engineering and Management logo"
+                 width="225" height="225" loading="lazy" decoding="async">
+            <div>
+              <div class="tl-item__top">
+                <span class="tl-item__year">2024 &ndash; Present</span>
+                <span class="tl-item__result">3rd Year</span>
+                <span class="tl-item__result">CGPA 8.1</span>
+              </div>
+              <h3 class="tl-item__org">JD College of Engineering and Management, Nagpur</h3>
+              <p class="tl-item__degree">Bachelor of Technology &mdash; Computer Science and Engineering</p>
+              <ul class="tl-item__courses">
+                <li class="chip">Data Structures &amp; Algorithms</li>
+                <li class="chip">Object-Oriented Programming</li>
+                <li class="chip">DBMS</li>
+                <li class="chip">Operating Systems</li>
+                <li class="chip">Computer Networks</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item" data-reveal>
+          <span class="tl-item__node" aria-hidden="true"></span>
+          <div class="tl-item__card">
+            <img class="tl-item__logo" src="/asset/images/spm-logo.jpg"
+                 alt="SPM High School and Jr. College logo"
+                 width="1080" height="683" loading="lazy" decoding="async">
+            <div>
+              <div class="tl-item__top">
+                <span class="tl-item__year">2022 &ndash; 2024</span>
+                <span class="tl-item__result">Class XII</span>
+                <span class="tl-item__result">63.17%</span>
+              </div>
+              <h3 class="tl-item__org">SPM High School and Jr. College, Wani</h3>
+              <p class="tl-item__degree">Science &mdash; Physics, Chemistry, Mathematics and Information Technology</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       CONTACT
+       ============================================================ -->
+    <section class="section" id="contact">
+    <div class="container">
+      <div class="contact__grid">
+
+        <div data-reveal>
+          <p class="section-head__label mono">Contact</p>
+          <h2 class="contact__title">Let's build<br><em>something together.</em></h2>
+          <p class="contact__text">
+            Have a project in mind, want to talk about a role, or just want to
+            connect? I'd genuinely like to hear from you.
+          </p>
+
+          <div class="contact__links">
+            <% if (sEmail) { %>
+            <a class="link-row" href="mailto:<%= sEmail %>">
+              <span class="link-row__icon"><i class="fa-solid fa-envelope"></i></span>
+              <span>
+                <span class="link-row__label">Email</span>
+                <span class="link-row__value"><%= sEmail %></span>
+              </span>
+              <i class="fas fa-arrow-right link-row__arrow" aria-hidden="true"></i>
+            </a>
+            <% } %>
+
+            <% if (sGithub) { %>
+            <a class="link-row" href="<%= sGithub %>" target="_blank" rel="noopener">
+              <span class="link-row__icon"><i class="fa-brands fa-github"></i></span>
+              <span>
+                <span class="link-row__label">GitHub</span>
+                <span class="link-row__value"><%= sGithubDisplay %></span>
+              </span>
+              <i class="fas fa-arrow-right link-row__arrow" aria-hidden="true"></i>
+            </a>
+            <% } %>
+
+          <% if (sLinkedin) { %>
+          <a class="link-row" href="<%= sLinkedin %>" target="_blank" rel="noopener">
+            <span class="link-row__icon"><i class="fa-brands fa-linkedin-in"></i></span>
+            <span>
+              <span class="link-row__label">LinkedIn</span>
+              <span class="link-row__value"><%= sLinkedin.replace(/^https?:\/\//, '') %></span>
+            </span>
+            <i class="fas fa-arrow-right link-row__arrow" aria-hidden="true"></i>
+          </a>
+          <% } %>
+
+          <% if (sInstagram) { %>
+          <a class="link-row" href="<%= sInstagram %>" target="_blank" rel="noopener">
+            <span class="link-row__icon"><i class="fa-brands fa-instagram"></i></span>
+            <span>
+              <span class="link-row__label">Instagram</span>
+              <span class="link-row__value"><%= sInstagram.replace(/^https?:\/\//, '') %></span>
+            </span>
+            <i class="fas fa-arrow-right link-row__arrow" aria-hidden="true"></i>
+          </a>
+          <% } %>
+
+          <% if (sResume) { %>
+          <a class="link-row" href="<%= sResume %>" target="_blank" rel="noopener">
+            <span class="link-row__icon"><i class="fa-solid fa-file-arrow-down"></i></span>
+            <span>
+              <span class="link-row__label">Resume</span>
+              <span class="link-row__value">Download PDF</span>
+            </span>
+            <i class="fas fa-arrow-right link-row__arrow" aria-hidden="true"></i>
+          </a>
+          <% } %>
+          </div>
+        </div>
+
+        <!-- Submissions POST to /api/contact (Express + MongoDB, Phase 7).
+             The honeypot field is invisible to people and catches bots. -->
+        <form class="form" id="contact-form" novalidate data-reveal>
+          <div class="field hp-field" aria-hidden="true">
+            <label for="cf-website">Website</label>
+            <input class="input" type="text" id="cf-website" name="website" tabindex="-1" autocomplete="off">
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="cf-name">Name <span aria-hidden="true">*</span></label>
+            <input class="input" type="text" id="cf-name" name="name"
+                   placeholder="Your name" autocomplete="name" required
+                   maxlength="80" aria-describedby="cf-name-err">
+            <p class="field__error" id="cf-name-err" role="alert"></p>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="cf-email">Email <span aria-hidden="true">*</span></label>
+            <input class="input" type="email" id="cf-email" name="email"
+                   placeholder="you@example.com" autocomplete="email" required
+                   maxlength="160" aria-describedby="cf-email-err">
+            <p class="field__error" id="cf-email-err" role="alert"></p>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="cf-subject">Subject</label>
+            <input class="input" type="text" id="cf-subject" name="subject"
+                   placeholder="What is this about?" maxlength="140">
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="cf-message">Message <span aria-hidden="true">*</span></label>
+            <textarea class="input" id="cf-message" name="message" rows="5"
+                      placeholder="Tell me about your project or idea" required
+                      minlength="10" maxlength="2000" aria-describedby="cf-message-err"></textarea>
+            <p class="field__error" id="cf-message-err" role="alert"></p>
+          </div>
+
+          <div class="form__foot">
+            <button class="btn btn--primary" type="submit" id="cf-submit">
+              <i class="fas fa-paper-plane"></i> Send Message
+            </button>
+            <p class="form__status" id="cf-status" role="status" aria-live="polite"></p>
+          </div>
+
+          <noscript>
+            <% if (sEmail) { %>
+            <p class="form__noscript">
+              JavaScript is off, so this form can't submit. Email me instead:
+              <a href="mailto:<%= sEmail %>"><%= sEmail %></a>.
+            </p>
+            <% } %>
+          </noscript>
+        </form>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<button class="back-to-top" id="back-to-top" type="button" aria-label="Back to top">
+  <i class="fas fa-arrow-up"></i>
+</button>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<%- include('partials/footer') %>
+
+    <script src="/js/motion.js"></script>
+    <script src="/js/theme.js"></script>
+<script src="/js/contact.js"></script>
+<script src="/js/navigation.js"></script>
+<script src="/js/main.js"></script>
+</body>
+</html>

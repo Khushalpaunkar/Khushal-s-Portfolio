@@ -1,0 +1,21 @@
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="admin-top">
+    <nav class="admin-nav" aria-label="Admin">
+      <a href="/admin">Dashboard</a>
+      <a href="/admin/messages">Messages</a>
+      <a href="/admin/projects">Projects</a>
+      <a href="/admin/settings">Settings</a>
+      <a href="/admin/password">Password</a>
+    </nav>
+    <div class="admin-top__right">
+      <a href="/">View site</a>
+      <form method="post" action="/admin/logout">
+        <input type="hidden" name="csrfToken" value="<%= csrfToken %>">
+        <button class="btn btn-danger" type="submit">Sign out</button>
+      </form>
+    </div>
+  </header>
+
+  <% if (flash) { %>
+    <p class="form__status is-on form__status--<%= flash.type %>" role="alert"><%= flash.message %></p>
+  <% } %>

@@ -1,0 +1,63 @@
+<footer class="footer">
+  <%
+    /* Contact/socials are editable via /admin/settings. Bundled defaults below
+       apply when the settings document has never been saved; an explicitly
+       cleared field simply drops that link. */
+    var s = (typeof siteSettings !== 'undefined' && siteSettings && Object.keys(siteSettings).length)
+      ? siteSettings
+      : {
+          contactEmail: 'khushalpaunkar79@gmail.com',
+          githubUrl: 'https://github.com/Khushalpaunkar',
+          linkedinUrl: 'https://www.linkedin.com/in/khushalpaunkar',
+          instagramUrl: 'https://www.instagram.com/_khushal.089',
+          resumeUrl: '/asset/khushal-resume.pdf',
+        };
+    var socials = [
+      s.githubUrl ? { href: s.githubUrl, label: 'GitHub', icon: 'fa-brands fa-github', external: true } : null,
+      s.linkedinUrl ? { href: s.linkedinUrl, label: 'LinkedIn', icon: 'fa-brands fa-linkedin-in', external: true } : null,
+      s.instagramUrl ? { href: s.instagramUrl, label: 'Instagram', icon: 'fa-brands fa-instagram', external: true } : null,
+      s.contactEmail ? { href: 'mailto:' + s.contactEmail, label: 'Email', icon: 'fa-solid fa-envelope', external: false } : null,
+      s.resumeUrl ? { href: s.resumeUrl, label: 'Resume', icon: 'fa-solid fa-file-arrow-down', external: true } : null,
+    ].filter(Boolean);
+  %>
+  <div class="container">
+    <div class="footer__grid">
+      <div>
+        <p class="footer__brand">KHUSHAL<em>.</em>P</p>
+        <p class="footer__tagline">
+          Computer Science student and full-stack developer building MERN
+          applications and AI-powered tools.
+        </p>
+      </div>
+
+      <div>
+        <p class="footer__head">Navigate</p>
+        <nav class="footer__nav" aria-label="Footer">
+          <a href="#home">Home</a>
+          <a href="#about">About</a>
+          <a href="#skills">Skills</a>
+          <a href="#projects">Projects</a>
+          <a href="#education">Education</a>
+          <a href="#contact">Contact</a>
+        </nav>
+      </div>
+
+      <div>
+        <p class="footer__head">Elsewhere</p>
+        <div class="footer__social">
+          <% socials.forEach(function (item) { %>
+            <a class="icon-btn" href="<%= item.href %>" <%= item.external ? 'target="_blank" rel="noopener"' : '' %> aria-label="<%= item.label %>" title="<%= item.label %>">
+              <i class="<%= item.icon %>"></i>
+            </a>
+          <% }); %>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <span>&copy; <%= new Date().getFullYear() %> Khushal Paunkar</span>
+      <span>Built with Node.js, Express &amp; MongoDB</span>
+      <span class="status"><i class="status__dot" aria-hidden="true"></i> System Online</span>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <%- include('partials/head') %>
+  <style>
+    .admin-toolbar h1 { margin: 0 0 1.2rem; font-size: 1.5rem; }
+    .form--narrow { max-width: 620px; }
+  </style>
+</head>
+<body class="admin-body">
+  <%- include('partials/topbar') %>
+
+  <main id="main">
+  <div class="admin-toolbar">
+    <h1>Site settings</h1>
+  </div>
+
+  <p class="field__hint">
+    These replace the hardcoded contact details across the home page, footer and
+    navigation. Leave a URL empty to hide that link; the site keeps working
+    from its bundled defaults when MongoDB is offline.
+  </p>
+
+  <% if (errors && errors._form) { %>
+    <p class="form__status is-on form__status--err" role="alert"><%= errors._form %></p>
+  <% } %>
+
+  <form class="form form-grid form--narrow" method="post" action="/admin/settings" id="settings-form">
+    <input type="hidden" name="csrfToken" value="<%= csrfToken %>">
+
+    <div class="field field--wide">
+      <label class="field__label" for="s-email">Contact email</label>
+      <input class="input" type="email" id="s-email" name="contactEmail" maxlength="160"
+             value="<%= values.contactEmail || '' %>" autocomplete="off">
+      <% if (errors && errors.contactEmail) { %><p class="field__error is-on" role="alert"><%= errors.contactEmail %></p><% } %>
+    </div>
+
+    <div class="field field--wide">
+      <label class="field__label" for="s-github">GitHub</label>
+      <input class="input" type="url" id="s-github" name="githubUrl" maxlength="200"
+             value="<%= values.githubUrl || '' %>" placeholder="https://github.com/you" autocomplete="off">
+      <% if (errors && errors.githubUrl) { %><p class="field__error is-on" role="alert"><%= errors.githubUrl %></p><% } %>
+    </div>
+
+    <div class="field field--wide">
+      <label class="field__label" for="s-linkedin">LinkedIn</label>
+      <input class="input" type="url" id="s-linkedin" name="linkedinUrl" maxlength="200"
+             value="<%= values.linkedinUrl || '' %>" autocomplete="off">
+      <% if (errors && errors.linkedinUrl) { %><p class="field__error is-on" role="alert"><%= errors.linkedinUrl %></p><% } %>
+    </div>
+
+    <div class="field field--wide">
+      <label class="field__label" for="s-instagram">Instagram</label>
+      <input class="input" type="url" id="s-instagram" name="instagramUrl" maxlength="200"
+             value="<%= values.instagramUrl || '' %>" autocomplete="off">
+      <% if (errors && errors.instagramUrl) { %><p class="field__error is-on" role="alert"><%= errors.instagramUrl %></p><% } %>
+    </div>
+
+    <div class="field field--wide">
+      <label class="field__label" for="s-resume">Resume</label>
+      <input class="input" type="text" id="s-resume" name="resumeUrl" maxlength="200"
+             value="<%= values.resumeUrl || '' %>" autocomplete="off">
+      <p class="field__hint">A site path like /asset/khushal-resume.pdf or a full http(s) URL.</p>
+      <% if (errors && errors.resumeUrl) { %><p class="field__error is-on" role="alert"><%= errors.resumeUrl %></p><% } %>
+    </div>
+
+    <div class="field--wide">
+      <button class="btn btn--primary" type="submit">Save settings</button>
+      <a class="btn btn--ghost" href="/admin">Cancel</a>
+    </div>
+  </form>
+  </main>
+</body>
+</html>

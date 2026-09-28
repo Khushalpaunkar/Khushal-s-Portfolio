@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <%- include('partials/head') %>
+  <style>
+    .admin-filters { display: flex; gap: .5rem; margin: 0 0 1.2rem; flex-wrap: wrap; }
+    .admin-filters a { padding: .35rem .8rem; border-radius: 999px; font-size: .88rem;
+      border: 1px solid var(--border); color: var(--muted); text-decoration: none; }
+    .admin-filters a.is-on { background: var(--accent-ink); color: var(--bg); border-color: transparent; }
+    .admin-row { display: grid; grid-template-columns: 1fr auto; gap: .8rem; align-items: center;
+      border: 1px solid var(--border); border-radius: .7rem; padding: .9rem 1.1rem; margin-bottom: .6rem;
+      background: var(--surface); }
+    .admin-row a { color: var(--ink); text-decoration: none; }
+    .admin-row a:hover { color: var(--accent-ink); }
+    .admin-row__meta { display: flex; gap: .6rem; align-items: center; font-size: .82rem; color: var(--muted); }
+    .badge { padding: .1rem .55rem; border-radius: 999px; font-size: .75rem; border: 1px solid var(--border); }
+    .badge--new { color: var(--accent-ink); border-color: var(--accent-ink); }
+    .badge--archived { opacity: .6; }
+    .admin-empty { color: var(--muted); border: 1px dashed var(--border); border-radius: .7rem; padding: 1.4rem; text-align: center; }
+    .admin-meta { color: var(--muted); font-size: .85rem; margin: 0 0 1rem; }
+    .admin-pager { display: flex; gap: .8rem; align-items: center; justify-content: space-between; margin-top: 1.4rem; }
+    .admin-pager__cur { color: var(--muted); font-size: .9rem; }
+    .btn.is-disabled { opacity: .4; pointer-events: none; }
+  </style>
+</head>
+<body class="admin-body">
+  <% const qs = filter === 'all' ? '?' : '?filter=' + filter + '&'; %>
+  <%- include('partials/topbar') %>
+
+  <main id="main">
+  <h1 style="margin-top:0">Messages</h1>
+
+  <% if (source === 'offline') { %>
+    <p class="form__status is-on form__status--err">MongoDB is offline — this list is empty. Start the database to see submissions.</p>
+  <% } else if (source === 'error') { %>
+    <p class="form__status is-on form__status--err">Could not load messages. Please try again.</p>
+  <% } %>
+
+  <nav class="admin-filters" aria-label="Filter messages">
+    <a href="/admin/messages" class="<%= filter === 'all' ? 'is-on' : '' %>">All<%= total ? ' (' + total + ')' : '' %></a>
+    <a href="/admin/messages?filter=new" class="<%= filter === 'new' ? 'is-on' : '' %>">New<%= counts.new ? ' (' + counts.new + ')' : '' %></a>
+    <a href="/admin/messages?filter=read" class="<%= filter === 'read' ? 'is-on' : '' %>">Read<%= counts.read ? ' (' + counts.read + ')' : '' %></a>
+    <a href="/admin/messages?filter=archived" class="<%= filter === 'archived' ? 'is-on' : '' %>">Archived<%= counts.archived ? ' (' + counts.archived + ')' : '' %></a>
+  </nav>
+
+  <% if (!messages.length) { %>
+    <p class="admin-empty">No messages here yet.<%= page > 1 ? ' This page is past the end of the list.' : '' %></p>
+  <% } else { %>
+    <p class="admin-meta">
+      Showing <%= (page - 1) * 20 + 1 %>–<%= (page - 1) * 20 + messages.length %> of <%= total %>
+    </p>
+    <% messages.forEach(function (m) { %>
+      <div class="admin-row">
+        <a href="/admin/messages/<%= m._id %>">
+          <strong><%= m.name %></strong>
+          <%= m.subject ? '— ' + m.subject : '' %>
+        </a>
+        <span class="admin-row__meta">
+          <span class="badge badge--<%= m.status %>"><%= m.status %></span>
+          <span><%= new Date(m.createdAt).toLocaleDateString() %></span>
+        </span>
+      </div>
+    <% }) %>
+  <% } %>
+
+  <% if (total > 0) { %>
+    <nav class="admin-pager" aria-label="Message pages">
+      <% if (page > 1) { %>
+        <a class="btn" href="/admin/messages<%= qs %>page=<%= page - 1 %>">← Newer</a>
+      <% } else { %>
+        <span class="btn is-disabled">← Newer</span>
+      <% } %>
+      <span class="admin-pager__cur">Page <%= page %> of <%= pages %></span>
+      <% if (page < pages) { %>
+        <a class="btn" href="/admin/messages<%= qs %>page=<%= page + 1 %>">Older →</a>
+      <% } else { %>
+        <span class="btn is-disabled">Older →</span>
+      <% } %>
+    </nav>
+  <% } %>
+
+  </main>
+</body>
+</html>

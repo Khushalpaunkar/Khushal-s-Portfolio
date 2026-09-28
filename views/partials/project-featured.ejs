@@ -1,0 +1,94 @@
+<%
+  /* One featured project card.
+
+     Locals:
+       project      - the project document (or normalised seed object)
+       index        - zero-based position, used for the number and to alternate
+                      the flipped layout
+       techIcon,
+       placeholderIcon  - helpers from utils/icons
+
+     A missing image renders a labelled placeholder, and a missing URL renders
+     no button. Neither case may produce a broken image or a dead link. */
+  const flip = index % 2 === 1;
+  const hasImage = Boolean(project.image);
+  const links = [
+    project.githubUrl ? { href: project.githubUrl, label: 'Source Code', icon: 'fab fa-github' } : null,
+    project.liveUrl ? { href: project.liveUrl, label: 'Live Demo', icon: 'fas fa-arrow-up-right-from-square' } : null,
+  ].filter(Boolean);
+%>
+<article class="pf <%= flip ? 'pf--flip' : '' %>" id="project-<%= project.slug %>" data-reveal>
+  <div class="pf__media">
+    <% if (hasImage) { %>
+      <img src="<%= project.image %>" alt="<%= project.imageAlt %>" loading="lazy" decoding="async">
+    <% } else { %>
+      <div class="pf__placeholder">
+        <i class="<%= placeholderIcon(project.placeholderIcon) %>" aria-hidden="true"></i>
+        <span>Screenshot coming soon</span>
+      </div>
+    <% } %>
+  </div>
+
+  <div class="pf__body">
+    <span class="pf__num" aria-hidden="true"><%= String(index + 1).padStart(2, '0') %></span>
+
+    <div class="pf__tags">
+      <span class="badge badge--accent">Featured</span>
+      <% if (project.category) { %><span class="badge badge--muted"><%= project.category %></span><% } %>
+      <% (project.tags || []).forEach(function (tag) { %>
+        <span class="badge badge--muted"><%= tag %></span>
+      <% }); %>
+      <% if (project.year) { %><span class="badge badge--muted"><%= project.year %></span><% } %>
+    </div>
+
+    <h3 class="pf__title"><a class="pf__title-link" href="/projects/<%= project.slug %>"><%= project.title %></a></h3>
+    <% if (project.shortDescription) { %>
+      <p class="pf__tagline"><%= project.shortDescription %></p>
+    <% } %>
+
+    <% if (project.problem || project.solution) { %>
+      <div class="pf__ps">
+        <% if (project.problem) { %>
+          <div class="pf__ps-item">
+            <h4>Problem</h4>
+            <p><%= project.problem %></p>
+          </div>
+        <% } %>
+        <% if (project.solution) { %>
+          <div class="pf__ps-item">
+            <h4>Solution</h4>
+            <p><%= project.solution %></p>
+          </div>
+        <% } %>
+      </div>
+    <% } %>
+
+    <% if ((project.features || []).length) { %>
+      <ul class="pf__features">
+        <% project.features.forEach(function (feature) { %>
+          <li><i class="fa-solid fa-circle" aria-hidden="true"></i> <%= feature %></li>
+        <% }); %>
+      </ul>
+    <% } %>
+
+    <% if ((project.technologies || []).length) { %>
+      <div class="pf__stack">
+        <% project.technologies.forEach(function (tech) { %>
+          <span class="chip"><i class="<%= techIcon(tech) %>" aria-hidden="true"></i> <%= tech %></span>
+        <% }); %>
+      </div>
+    <% } %>
+
+    <div class="pf__actions">
+      <% if (links.length) { %>
+        <% links.forEach(function (link) { %>
+          <a class="btn btn--ghost btn--sm" href="<%= link.href %>" target="_blank" rel="noopener">
+            <i class="<%= link.icon %>" aria-hidden="true"></i> <%= link.label %>
+          </a>
+        <% }); %>
+      <% } else { %>
+        <p class="pf__note"><i class="fas fa-lock" aria-hidden="true"></i> Repository link coming soon</p>
+      <% } %>
+    </div>
+  </div>
+</article>

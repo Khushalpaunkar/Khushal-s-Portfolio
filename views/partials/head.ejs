@@ -1,0 +1,66 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title><%= title ? title + ' | ' : '' %>Khushal Paunkar — Full-Stack Developer</title>
+
+<%
+  /* Per-page SEO. Pages may pass `pageDescription` and `pageUrl`; without them
+     the site defaults below apply. Absolute URLs stay gated on SITE_URL.
+     The typeof guard reads the render locals, so these read a foreign name
+     (nothing const-declared in this scope). */
+  var seoDesc = (typeof pageDescription !== 'undefined' && pageDescription) ? String(pageDescription) : '';
+  var seoPath = (typeof pageUrl !== 'undefined' && pageUrl) ? String(pageUrl).replace(/^\/+/, '') : '';
+  var seoImage = (typeof pageImage !== 'undefined' && pageImage) ? String(pageImage) : '';
+%>
+<% if (seoDesc) { %>
+<meta name="description" content="<%= seoDesc %>">
+<% } else { %>
+<meta name="description" content="Khushal Paunkar — Computer Science student and full-stack developer at JD College of Engineering and Management, Nagpur. Building MERN applications and AI-powered tools.">
+<% } %>
+
+<%
+  /* Absolute URLs are only valid once a real domain is known, so canonical
+     and Open Graph URLs are rendered only when SITE_URL is configured.
+     No domain is guessed. */
+  var siteUrl = (typeof siteUrl !== 'undefined' && siteUrl) ? String(siteUrl).replace(/\/+$/, '') : '';
+%>
+<% if (siteUrl) { %>
+<link rel="canonical" href="<%= seoPath ? siteUrl + '/' + seoPath : siteUrl + '/' %>">
+<% } %>
+
+<!-- Open Graph -->
+<meta property="og:type" content="<%= seoPath ? 'article' : 'website' %>">
+<meta property="og:title" content="<%= seoPath ? title + ' — Khushal Paunkar' : 'Khushal Paunkar — Full-Stack Developer' %>">
+<meta property="og:description" content="<%= seoDesc || 'Computer Science student and full-stack developer building MERN applications and AI-powered tools.' %>">
+<% if (siteUrl) { %>
+<meta property="og:image" content="<%= seoImage ? (seoImage.indexOf('http') === 0 ? seoImage : siteUrl + seoImage) : siteUrl + '/asset/images/khushalimg.jpg' %>">
+<meta property="og:url" content="<%= siteUrl + '/' + (seoPath ? seoPath : '') %>">
+<% } %>
+<meta name="twitter:card" content="summary_large_image">
+
+<meta name="theme-color" content="#08090b">
+
+<!-- Inline SVG favicon: no extra request, no 404 -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%2308090b'/><text x='50' y='68' font-family='monospace' font-size='54' font-weight='700' fill='%23ff8a00' text-anchor='middle'>KP</text></svg>">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<link rel="stylesheet" href="/css/main.css">
+
+<script nonce="<%= cspNonce %>">
+  /* Applied before first paint so the correct theme never flashes. */
+  (function () {
+    var html = document.documentElement;
+    try {
+      var stored = localStorage.getItem('theme');
+      var theme = stored || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      html.setAttribute('data-theme', theme);
+    } catch (e) {
+      html.setAttribute('data-theme', 'dark');
+    }
+    /* Scroll-reveal styles are gated behind this class, so they only apply
+       when the script that can undo them (motion.js) is actually able to
+       run. Gating on the feature rather than on "script loaded" is what
+       guarantees content can never be left invisible. */
+    if ('IntersectionObserver' in window) html.classList.add('js');
+  })();
+</script>

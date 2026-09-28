@@ -1,0 +1,42 @@
+<header class="nav" id="nav">
+  <%
+    /* Resume link is editable via /admin/settings; bundled default applies when
+       the settings document has never been saved, cleared hides the button. */
+    var sNav = (typeof siteSettings !== 'undefined' && siteSettings && Object.keys(siteSettings).length)
+      ? siteSettings
+      : { resumeUrl: '/asset/khushal-resume.pdf' };
+    var resumeUrl = sNav.resumeUrl;
+  %>
+  <div class="nav__inner">
+    <a href="#home" class="nav__brand" aria-label="Khushal Paunkar — home">KHUSHAL's<em>.</em>PORTFOLIO</a>
+
+    <nav class="nav__menu" id="navul" aria-label="Primary">
+      <span class="nav__indicator" id="nav-indicator" aria-hidden="true"></span>
+      <ul class="nav__list">
+        <li><a class="nav__link" href="#home">Home</a></li>
+        <li><a class="nav__link" href="#about">About</a></li>
+        <li><a class="nav__link" href="#skills">Skills</a></li>
+        <li><a class="nav__link" href="#projects">Projects</a></li>
+        <li><a class="nav__link" href="#education">Education</a></li>
+        <li><a class="nav__link" href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div class="nav__actions">
+      <% if (resumeUrl) { %>
+      <a href="<%= resumeUrl %>" class="btn btn--ghost btn--sm" target="_blank" rel="noopener">
+        <i class="fas fa-file-arrow-down"></i>
+        <span class="nav__resume-label">Resume</span>
+      </a>
+      <% } %>
+
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch colour theme" title="Switch theme">
+        <i class="fa-solid fa-moon" aria-hidden="true"></i>
+      </button>
+
+      <button class="nav__burger" id="menu-btn" type="button" aria-label="Toggle menu" aria-expanded="false" aria-controls="navul">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>

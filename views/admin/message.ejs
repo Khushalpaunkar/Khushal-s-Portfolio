@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <%- include('partials/head') %>
+  <style>
+    .msg { border: 1px solid var(--border); border-radius: .8rem; background: var(--surface); padding: 1.4rem 1.6rem; }
+    .msg dl { margin: 0; }
+    .msg dt { color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; margin-top: 1rem; }
+    .msg dd { margin: .2rem 0 0; overflow-wrap: anywhere; }
+    .msg dd:first-of-type, .msg dt:first-of-type { margin-top: 0; }
+    .msg__body { white-space: pre-wrap; }
+    .msg__actions { display: flex; gap: .7rem; flex-wrap: wrap; margin-top: 1.5rem; align-items: center; }
+    .msg__actions form { margin: 0; }
+    .danger { color: var(--danger, #c0392b); }
+  </style>
+</head>
+<body class="admin-body">
+  <%- include('partials/topbar') %>
+
+  <main id="main">
+  <h1 class="visually-hidden">Message</h1>
+  <article class="msg">
+    <dl>
+      <dt>From</dt>
+      <dd><%= message.name %></dd>
+      <dt>Email</dt>
+      <dd><a href="mailto:<%= message.email %>"><%= message.email %></a></dd>
+      <% if (message.subject) { %>
+        <dt>Subject</dt>
+        <dd><%= message.subject %></dd>
+      <% } %>
+      <dt>Received</dt>
+      <dd><%= new Date(message.createdAt).toLocaleString() %></dd>
+      <dt>Status</dt>
+      <dd><strong><%= message.status %></strong></dd>
+      <dt>Message</dt>
+      <dd class="msg__body"><%= message.message %></dd>
+    </dl>
+
+    <div class="msg__actions">
+      <% if (message.email) { %>
+        <a class="btn" href="mailto:<%= message.email %>?subject=Re: <%= encodeURIComponent(message.subject || 'your message') %>">Reply by email</a>
+      <% } %>
+      <form method="post" action="/admin/messages/<%= message._id %>/status">
+        <input type="hidden" name="csrfToken" value="<%= csrfToken %>">
+        <input type="hidden" name="status" value="read">
+        <button class="btn" type="submit">Mark read</button>
+      </form>
+
+      <% if (message.status !== 'archived') { %>
+        <form method="post" action="/admin/messages/<%= message._id %>/status">
+          <input type="hidden" name="csrfToken" value="<%= csrfToken %>">
+          <input type="hidden" name="status" value="archived">
+          <button class="btn" type="submit">Archive</button>
+        </form>
+      <% } %>
+
+      <form method="post" action="/admin/messages/<%= message._id %>/delete">
+        <input type="hidden" name="csrfToken" value="<%= csrfToken %>">
+        <label class="danger" style="font-size:.9rem"><input type="checkbox" name="confirm"> I understand this deletes forever</label>
+        <button class="btn btn-danger" type="submit">Delete</button>
+      </form>
+    </div>
+  </article>
+  </main>
+
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title><%= title %> — Khushal Paunkar</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%2308090b'/><text x='50' y='68' font-family='monospace' font-size='54' font-weight='700' fill='%23ff8a00' text-anchor='middle'>KP</text></svg>">
+  <link rel="stylesheet" href="/css/main.css">
+  <style>
+    .admin-body {
+      min-height: 100vh;
+      padding: 1.5rem;
+      max-width: 52rem;
+      margin: 0 auto;
+      background:
+        radial-gradient(60rem 30rem at 90% -10%, rgba(255, 138, 0, 0.12), transparent 60%),
+        var(--bg);
+    }
+    .admin-top {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; flex-wrap: wrap;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.1rem; margin-bottom: 1.6rem;
+    }
+    .admin-top h1 { font-size: var(--fs-h3); margin: 0; }
+    .admin-top__who { color: var(--muted); font-size: .95rem; }
+    .admin-top__who strong { color: var(--ink); }
+    .admin-top__right { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+    .admin-nav { display: flex; align-items: center; gap: 1.1rem; }
+    .admin-nav a { color: var(--muted); text-decoration: none; font-size: .95rem; }
+    .admin-nav a:hover { color: var(--accent-ink); }
+    .admin-stats {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
+    }
+    .admin-stat {
+      border: 1px solid var(--border); border-radius: .8rem;
+      background: var(--surface); padding: 1.2rem 1.4rem;
+    }
+    .admin-stat b { font-size: 1.8rem; display: block; }
+    .admin-stat span { color: var(--muted); font-size: .9rem; }
+    .admin-recent { margin-top: 1.6rem; }
+    .admin-recent .admin-stat { display: flex; justify-content: space-between; gap: 1rem;
+      text-decoration: none; color: var(--ink); align-items: baseline; }
+    .admin-recent .admin-stat:hover { border-color: var(--accent); }
+    .admin-recent .msgsub { color: var(--muted); font-size: .9rem; overflow: hidden;
+      text-overflow: ellipsis; white-space: nowrap; }
+    .admin-recent .msgfrom { font-weight: 600; }
+    .admin-actions { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.6rem; }
+    .admin-note { color: var(--muted); font-size: .95rem; }
+    .btn-danger { background: var(--danger, #c0392b); color: #fff; }
+    @media (max-width: 640px) { .admin-stats { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body class="admin-body">
+
+  <% if (flash) { %>
+    <p class="form__status is-on form__status--<%= flash.type %>" role="alert"><%= flash.message %></p>
+  <% } %>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="admin-top">
+    <div>
+      <h1>Admin</h1>
+      <p class="admin-top__who">Signed in as <strong><%= adminUser.name %></strong> (<%= adminUser.username %>)</p>
+    </div>
+    <nav class="admin-top__right" aria-label="Admin sections">
+      <div class="admin-nav">
+        <a href="/admin/messages">Messages</a>
+        <a href="/admin/projects">Projects</a>
+        <a href="/admin/settings">Settings</a>
+      </div>
+      <a class="btn" href="/">View site</a>
+    </nav>
+  </header>
+
+  <main id="main">
+  <section class="admin-stats" aria-label="Overview">
+    <div class="admin-stat">
+      <b><%= stats.messages === null ? '—' : stats.messages %></b>
+      <span>Contact messages</span>
+    </div>
+    <div class="admin-stat">
+      <b><%= stats.newMessages === null ? '—' : stats.newMessages %></b>
+      <span>Unread</span>
+    </div>
+    <div class="admin-stat">
+      <b><%= stats.projects === null ? '—' : stats.projects %></b>
+      <span>Projects</span>
+    </div>
+  </section>
+
+  <% if (stats.messages === null) { %>
+    <p class="admin-note" style="margin-top:1.6rem">
+      Stats show “—” because MongoDB is offline; the site is running on bundled
+      seed content.
+    </p>
+  <% } else { %>
+    <section class="admin-recent" aria-label="Recent messages">
+      <h2 style="font-size:var(--fs-h5);margin:0 0 .6rem">Recent messages</h2>
+      <% if (!recent.length) { %>
+        <p class="admin-note">Inbox is empty.</p>
+      <% } else { %>
+        <% recent.forEach(function (m) { %>
+          <a class="admin-stat" href="/admin/messages/<%= m._id %>">
+            <span class="msgfrom"><%= m.name %></span>
+            <span class="msgsub"><%= m.subject || m.message.slice(0, 60) %></span>
+            <span style="color:var(--muted);font-size:.8rem;text-transform:uppercase"><%= m.status %></span>
+          </a>
+        <% }) %>
+      <% } %>
+    </section>
+
+    <div class="admin-actions">
+      <a class="btn" href="/admin/messages?filter=new">Open unread inbox</a>
+      <a class="btn" href="/admin/projects/new">New project</a>
+    </div>
+  <% } %>
+
+  <form method="post" action="/admin/logout" style="margin-top: 2rem;">
+    <input type="hidden" name="csrfToken" value="<%= csrfToken %>">
+    <button class="btn btn-danger" type="submit">Sign out</button>
+  </form>
+  </main>
+
+</body>
+</html>

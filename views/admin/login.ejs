@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title><%= title %> — Khushal Paunkar</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <style>
+    /* Admin chrome is deliberately separate from the public site. */
+    .admin-body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 1.5rem;
+      background:
+        radial-gradient(60rem 30rem at 85% -10%, rgba(255, 138, 0, 0.12), transparent 60%),
+        var(--bg);
+    }
+    .admin-card {
+      width: 100%;
+      max-width: 26rem;
+      padding: 2rem 2.2rem;
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      background: var(--surface);
+    }
+    .admin-card h1 { font-size: var(--fs-h3); margin: 0 0 0.25rem; }
+    .admin-card__sub { color: var(--muted); font-size: .92rem; margin: 0 0 1.6rem; }
+    .admin-card__foot { margin-top: 1.5rem; text-align: center; font-size: .9rem; }
+    .admin-card__foot a { color: var(--accent-ink); }
+  </style>
+</head>
+<body class="admin-body">
+
+  <main id="main" class="admin-card">
+    <h1>Admin login</h1>
+    <p class="admin-card__sub">Portfolio V2 — private area.</p>
+
+    <% if (flash) { %>
+      <p class="form__status is-on form__status--<%= flash.type %>" role="alert"><%= flash.message %></p>
+    <% } %>
+
+    <form class="form" method="post" action="/admin/login" id="admin-login">
+      <input type="hidden" name="csrfToken" value="<%= csrfToken %>">
+      <input type="hidden" name="next" value="<%= next %>">
+
+      <div class="field">
+        <label class="field__label" for="a-username">Username</label>
+        <input class="input" type="text" id="a-username" name="username"
+               autocomplete="username" required autofocus maxlength="40">
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="a-password">Password</label>
+        <input class="input" type="password" id="a-password" name="password"
+               autocomplete="current-password" required maxlength="200">
+      </div>
+
+      <button class="btn" type="submit">Sign in</button>
+    </form>
+
+    <p class="admin-card__foot"><a href="/">← Back to the site</a></p>
+  </main>
+
+</body>
+</html>

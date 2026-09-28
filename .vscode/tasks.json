@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "dev",
+      "type": "npm",
+      "script": "dev",
+      "problemMatcher": "$nodemon",
+      "isBackground": true,
+      "presentation": { "reveal": "always", "panel": "dedicated" },
+      "runOptions": { "instanceLimit": 1 }
+    },
+    {
+      "label": "start",
+      "type": "npm",
+      "script": "start",
+      "problemMatcher": "$nodemon",
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    }
+  ]
+}

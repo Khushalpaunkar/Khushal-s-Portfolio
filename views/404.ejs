@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 — Page Not Found | Khushal Paunkar</title>
+    <meta name="description" content="The page you were looking for does not exist.">
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+    <main id="main" class="error-page">
+        <p class="error-code">404</p>
+        <h1 class="error-title">Page not found</h1>
+        <p class="error-text">
+            The page you were looking for doesn't exist or has been moved.
+        </p>
+        <% if (typeof attemptedPath !== 'undefined' && attemptedPath) { %>
+            <p class="error-path"><code><%= attemptedPath %></code></p>
+        <% } %>
+        <div class="error-actions">
+            <a href="/" class="btn btn--primary"><i class="fas fa-arrow-left"></i> Back to Home</a>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <%- include('partials/head') %>
+  <style>
+    .admin-toolbar { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 1.2rem; }
+    .admin-toolbar h2 { margin: 0; }
+    .admin-toolbar a { color: var(--muted); font-size: .9rem; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1.4rem; }
+    .form-grid .field--wide { grid-column: 1 / -1; }
+    .field__hint { font-size: .8rem; color: var(--muted); margin: .25rem 0 0; }
+    @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } }
+    .admin-danger { margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.4rem; }
+    .danger { color: var(--danger, #c0392b); font-size: .9rem; }
+  </style>
+</head>
+<body class="admin-body">
+  <%- include('partials/topbar') %>
+
+  <main id="main">
+  <div class="admin-toolbar">
+    <h1><%= project && project._id ? 'Edit project' : 'New project' %></h1>
+    <a href="/admin/projects">← All projects</a>
+  </div>
+
+  <% if (errors && errors._form) { %>
+    <p class="form__status is-on form__status--err" role="alert"><%= errors._form %></p>
+  <% } %>
+
+  <form class="form form-grid" method="post"
+        action="<%= project && project._id ? '/admin/projects/' + project._id + '/edit' : '/admin/projects' %>"
+        id="project-form">
+    <input type="hidden" name="csrfToken" value="<%= csrfToken %>">
+
+    <div class="field field--wide">
+      <label class="field__label" for="p-title">Title <span aria-hidden="true">*</span></label>
+      <input class="input" type="text" id="p-title" name="title" required maxlength="120"
+             value="<%= project.title || '' %>">
+      <% if (errors && errors.title) { %><p class="field__error is-on" role="alert"><%= errors.title %></p><% } %>
+    </div>
+
+    <div class="field field--wide">
+      <label class="field__label" for="p-short">Short description</label>
+      <input class="input" type="text" id="p-short" name="shortDescription" maxlength="200"
+             value="<%= project.shortDescription || '' %>">
+      <p class="field__hint">One line for the project card (up to 200 characters).</p>
+    </div>
+
+    <div class="field field--wide">
+      <label class="field__label" for="p-desc">Full description</label>
+      <textarea class="input" id="p-desc" name="description" rows="5" maxlength="5000"><%= project.description || '' %></textarea>
+    </div>
+
+    <div class="field field--wide">
+      <label class="field__label" for="p-problem">Problem</label>
+      <textarea class="input" id="p-problem" name="problem" rows="3" maxlength="2000"><%= project.problem || '' %></textarea>
+    </div>
+
+    <div class="field field--wide">
+      <label class="field__label" for="p-solution">Solution</label>
+      <textarea class="input" id="p-solution" name="solution" rows="3" maxlength="2000"><%= project.solution || '' %></textarea>
+    </div>
+
+    <div class="field">
+      <label class="field__label" for="p-features">Features</label>
+      <textarea class="input" id="p-features" name="features" rows="4"><%= (project.features || []).join('\n') %></textarea>
+      <p class="field__hint">One per line (up to 12).</p>
+    </div>
+
+    <div class="field">
+      <label class="field__label" for="p-tech">Technologies</label>
+      <input class="input" type="text" id="p-tech" name="technologies"
+             value="<%= (project.technologies || []).join(', ') %>">
+      <p class="field__hint">Comma- or line-separated (up to 20).</p>
+    </div>
+
+    <div class="field">
+      <label class="field__label" for="p-tags">Tags</label>
+      <input class="input" type="text" id="p-tags" name="tags"
+             value="<%= (project.tags || []).join(', ') %>">
+      <p class="field__hint">e.g. Hackathon, MERN. Comma-separated (up to 5).</p>
+    </div>
+
+    <div class="field">
+      <label class="field__label" for="p-category">Category</label>
+      <input class="input" type="text" id="p-category" name="category" maxlength="60"
+             value="<%= project.category || 'Other' %>">
+    </div>
+
+    <div class="field">
+      <label class="field__label" for="p-year">Year</label>
+      <input class="input" type="number" id="p-year" name="year" min="1990" max="2100"
+             value="<%= project.year || '' %>">
+    </div>
+
+    <div class="field">
+      <label class="field__label" for="p-image">Screenshot URL</label>
+      <input class="input" type="text" id="p-image" name="image" placeholder="https://…"
+             value="<%= project.image || '' %>">
+    </div>
+
+    <div class="field">
+      <label class="field__label" for="p-imagealt">Image alt text</label>
+      <input class="input" type="text" id="p-imagealt" name="imageAlt" maxlength="160"
+             value="<%= project.imageAlt || '' %>">
+    </div>
+
+    <div class="field">
+      <label class="field__label" for="p-icon">Placeholder icon</label>
+      <select class="input" id="p-icon" name="placeholderIcon">
+        <% kinds.forEach(function (kind) { %>
+          <option value="<%= kind %>" <%= project.placeholderIcon === kind ? 'selected' : '' %>><%= kind %></option>
+        <% }) %>
+      </select>
+      <p class="field__hint">Shown when there is no screenshot.</p>
+    </div>
+
+    <div class="field">
+      <label class="field__label" for="p-order">Order</label>
+      <input class="input" type="number" id="p-order" name="order"
+             value="<%= project.order || 0 %>">
+      <p class="field__hint">Lower sorts first within each group.</p>
+    </div>
+
+    <div class="field field--wide">
+      <label class="field__label" for="p-github">GitHub URL</label>
+      <input class="input" type="text" id="p-github" name="githubUrl"
+             placeholder="https://github.com/…"
+             value="<%= project.githubUrl || '' %>">
+      <% if (errors && errors.githubUrl) { %><p class="field__error is-on" role="alert"><%= errors.githubUrl %></p><% } %>
+    </div>
+
+    <div class="field field--wide">
+      <label class="field__label" for="p-live">Live URL</label>
+      <input class="input" type="text" id="p-live" name="liveUrl"
+             placeholder="https://…"
+             value="<%= project.liveUrl || '' %>">
+      <% if (errors && errors.liveUrl) { %><p class="field__error is-on" role="alert"><%= errors.liveUrl %></p><% } %>
+    </div>
+
+    <div class="field">
+      <label class="field__label" style="display:inline-flex;gap:.5rem;align-items:center">
+        <input type="checkbox" name="featured" <%= project.featured ? 'checked' : '' %>> Featured project
+      </label>
+    </div>
+
+    <div class="field field--wide" style="margin-top:.5rem">
+      <button class="btn" type="submit"><%= project && project._id ? 'Save changes' : 'Create project' %></button>
+    </div>
+  </form>
+
+  <% if (project && project._id) { %>
+    <div class="admin-danger">
+      <form method="post" action="/admin/projects/<%= project._id %>/delete">
+        <input type="hidden" name="csrfToken" value="<%= csrfToken %>">
+        <p class="danger"><label style="display:inline-flex;gap:.5rem;align-items:center">
+          <input type="checkbox" name="confirm"> I understand this permanently deletes the project
+        </label></p>
+        <button class="btn btn-danger" type="submit">Delete project</button>
+      </form>
+    </div>
+  <% } %>
+
+  </main>
+</body>
+</html>

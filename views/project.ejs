@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <%- include('partials/head') %>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<%- include('partials/background') %>
+<%- include('partials/nav') %>
+
+<main id="main">
+
+  <section class="section">
+    <div class="container">
+
+      <nav class="crumb" aria-label="Breadcrumb">
+        <a href="/#projects" class="crumb__link">
+          <i class="fas fa-arrow-left" aria-hidden="true"></i> All projects
+        </a>
+      </nav>
+
+      <div class="project-detail" data-reveal>
+
+        <div class="pf__tags">
+          <% if (project.category) { %><span class="badge badge--accent"><%= project.category %></span><% } %>
+          <% (project.tags || []).forEach(function (tag) { %>
+            <span class="badge badge--muted"><%= tag %></span>
+          <% }); %>
+          <% if (project.year) { %><span class="badge badge--muted"><%= project.year %></span><% } %>
+        </div>
+
+        <h1 class="project-detail__title"><%= project.title %></h1>
+
+        <% if (project.shortDescription) { %>
+          <p class="project-detail__tagline"><%= project.shortDescription %></p>
+        <% } %>
+
+        <div class="project-detail__media">
+          <% if (project.image) { %>
+            <img src="<%= project.image %>" alt="<%= project.imageAlt %>" decoding="async">
+          <% } else { %>
+            <div class="pf__placeholder">
+              <i class="<%= placeholderIcon(project.placeholderIcon) %>" aria-hidden="true"></i>
+              <span>No screenshot yet</span>
+            </div>
+          <% } %>
+        </div>
+
+        <% if (project.description) { %>
+          <div class="project-detail__body">
+            <h2 class="project-detail__h2">About the project</h2>
+            <p><%= project.description %></p>
+          </div>
+        <% } %>
+
+        <% if (project.problem || project.solution) { %>
+          <div class="project-detail__body">
+            <% if (project.problem) { %>
+              <h2 class="project-detail__h2">Problem</h2>
+              <p><%= project.problem %></p>
+            <% } %>
+            <% if (project.solution) { %>
+              <h2 class="project-detail__h2">Solution</h2>
+              <p><%= project.solution %></p>
+            <% } %>
+          </div>
+        <% } %>
+
+        <% if ((project.features || []).length) { %>
+          <div class="project-detail__body">
+            <h2 class="project-detail__h2">Key features</h2>
+            <ul class="pf__features">
+              <% project.features.forEach(function (feature) { %>
+                <li><i class="fa-solid fa-circle" aria-hidden="true"></i> <%= feature %></li>
+              <% }); %>
+            </ul>
+          </div>
+        <% } %>
+
+        <% if ((project.technologies || []).length) { %>
+          <div class="project-detail__body">
+            <h2 class="project-detail__h2">Built with</h2>
+            <div class="pf__stack">
+              <% project.technologies.forEach(function (tech) { %>
+                <span class="chip"><i class="<%= techIcon(tech) %>" aria-hidden="true"></i> <%= tech %></span>
+              <% }); %>
+            </div>
+          </div>
+        <% } %>
+
+        <div class="project-detail__actions">
+          <% if (project.githubUrl) { %>
+            <a class="btn btn--ghost" href="<%= project.githubUrl %>" target="_blank" rel="noopener">
+              <i class="fab fa-github" aria-hidden="true"></i> Source Code
+            </a>
+          <% } %>
+          <% if (project.liveUrl) { %>
+            <a class="btn btn--primary" href="<%= project.liveUrl %>" target="_blank" rel="noopener">
+              <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i> Live Demo
+            </a>
+          <% } %>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<button class="back-to-top" id="back-to-top" type="button" aria-label="Back to top">
+  <i class="fas fa-arrow-up"></i>
+</button>
+
+<%- include('partials/footer') %>
+
+    <script src="/js/motion.js"></script>
+    <script src="/js/theme.js"></script>
+<script src="/js/navigation.js"></script>
+<script src="/js/main.js"></script>
+</body>
+</html>

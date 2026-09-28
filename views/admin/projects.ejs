@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <%- include('partials/head') %>
+  <style>
+    .admin-tools { display: flex; justify-content: space-between; gap: 1rem; align-items: center; flex-wrap: wrap; margin-bottom: 1rem; }
+    .admin-table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+    .admin-table th { text-align: left; color: var(--muted); font-size: .78rem; text-transform: uppercase; letter-spacing: .05em;
+      border-bottom: 1px solid var(--border); padding: .5rem .6rem; }
+    .admin-table td { padding: .6rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .admin-table a { color: var(--ink); text-decoration: none; }
+    .admin-table a:hover { color: var(--accent-ink); }
+    .admin-empty { color: var(--muted); border: 1px dashed var(--border); border-radius: .7rem; padding: 1.4rem; text-align: center; }
+  </style>
+</head>
+<body class="admin-body">
+  <%- include('partials/topbar') %>
+
+  <main id="main">
+  <div class="admin-tools">
+    <h1 style="margin:0">Projects</h1>
+    <a class="btn" href="/admin/projects/new">New project</a>
+  </div>
+
+  <% if (source === 'offline') { %>
+    <p class="form__status is-on form__status--err">MongoDB is offline — showing the bundled seed content. Changes cannot be saved until the database is running.</p>
+  <% } else if (source === 'error') { %>
+    <p class="form__status is-on form__status--err">Could not load projects. Please try again.</p>
+  <% } %>
+
+  <% if (!projects.length) { %>
+    <p class="admin-empty">No projects yet.</p>
+  <% } else { %>
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Category</th>
+          <th>Year</th>
+          <th>Featured</th>
+          <th>Order</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% projects.forEach(function (p) { %>
+          <tr>
+            <td>
+              <% if (p._id) { %>
+                <a href="/admin/projects/<%= p._id %>/edit"><%= p.title %></a>
+              <% } else { %>
+                <%= p.title %> <span style="color:var(--muted);font-size:.8rem">(seed — DB offline)</span>
+              <% } %>
+            </td>
+            <td><%= p.category %></td>
+            <td><%= p.year || '—' %></td>
+            <td><%= p.featured ? 'yes' : 'no' %></td>
+            <td><%= p.order %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+
+  </main>
+</body>
+</html>
