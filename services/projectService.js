@@ -130,7 +130,12 @@ async function getBySlug(slug) {
 
   if (db.isDbReady()) {
     try {
-      const doc = await Project.findOne({ slug: key }).exec();
+      // .lean() matters here: without it this is a hydrated Mongoose Document,
+      // whose schema fields live on the prototype, so withDefaults()'s spread
+      // copies nothing and every field falls back to its empty default. The
+      // listing query above already uses .lean(); this keeps the detail page
+      // shaped identically to the list that links to it.
+      const doc = await Project.findOne({ slug: key }).lean().exec();
       if (doc) return withDefaults(doc);
     } catch (error) {
       console.error('[projects] Detail read failed, trying bundled seed:', error.message);

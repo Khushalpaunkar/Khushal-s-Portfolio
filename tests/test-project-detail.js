@@ -60,17 +60,25 @@ const known = flat[0];
   check('empty slug -> null', project === null, String(project));
 
   db.isDbReady = () => true;
-  Project.findOne = () => ({ exec: async () => null });
+  // The service calls .lean() before .exec(), so the stub has to be chainable.
+  Project.findOne = () => ({ lean: () => ({ exec: async () => null }) });
   project = await service.getBySlug(known.slug);
   check('online miss falls back to seed (list never contradicts detail)', project && project.title === known.title, project && project.title);
   project = await service.getBySlug('no-such-project-anywhere');
   check('online miss + unknown -> null', project === null, String(project));
 
-  Project.findOne = () => ({ exec: async () => ({ title: 'From DB', slug: 'from-db-tier' }) });
+  let leanUsed = false;
+  Project.findOne = () => ({
+    lean: () => { leanUsed = true; return { exec: async () => ({ title: 'From DB', slug: 'from-db-tier' }) }; },
+  });
   project = await service.getBySlug('from-db-tier');
   check('online hit returns DB document (normalised)', project && project.title === 'From DB' && project.slug === 'from-db-tier', JSON.stringify(project));
+  // Regression guard. Without .lean() the service hands a hydrated Mongoose
+  // Document to withDefaults(), whose spread copies nothing (schema fields sit
+  // on the prototype) and every field silently falls back to its empty default.
+  check('detail query asks for .lean(), not a hydrated Document', leanUsed === true, String(leanUsed));
 
-  Project.findOne = () => ({ exec: async () => { throw new Error('db boom'); } });
+  Project.findOne = () => ({ lean: () => ({ exec: async () => { throw new Error('db boom'); } }) });
   project = await service.getBySlug(known.slug);
   check('online read error still falls back to seed', project && project.title === known.title, project && project.title);
 

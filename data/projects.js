@@ -21,7 +21,8 @@ module.exports = [
   /* ------------------------------------------------------------------
      FEATURED
      ------------------------------------------------------------------ */
-  {
+
+{
     title: 'KisaanMitra AI',
     shortDescription: 'AI-Powered Farming Assistant',
     category: 'AI / Agriculture',
@@ -30,34 +31,45 @@ module.exports = [
     order: 1,
 
     problem:
-      'Farmers lack accessible, timely guidance. Weather patterns, crop health ' +
-      'issues and government support schemes are scattered across sources that ' +
-      'are hard to navigate.',
+      'Farmers often struggle to access timely and reliable information about ' +
+      'weather, crop health, market prices, and government schemes. Relevant ' +
+      'information is spread across multiple sources and can be difficult to navigate.',
 
     solution:
-      'A conversational assistant that answers farming questions using the ' +
-      'Gemini API, bringing weather, crop intelligence, disease detection, ' +
-      'market prices and scheme information into one place.',
+      'KisaanMitra AI brings essential farming assistance into a single platform. ' +
+      'It uses the Gemini API to provide conversational guidance along with ' +
+      'weather insights, crop intelligence, disease detection, market information, ' +
+      'and government scheme discovery.',
 
     features: [
-      'AI farming assistant powered by the Gemini API',
-      'Weather information for agricultural planning',
-      'Crop intelligence and disease detection',
+      'AI-powered conversational farming assistant',
+      'Weather information for better agricultural planning',
+      'Crop intelligence and crop disease analysis',
       'Market information and price guidance',
-      'Government scheme lookups',
+      'Government scheme discovery and information',
+      'Farmer-friendly and multilingual interaction'
     ],
 
-    technologies: ['HTML', 'CSS', 'JavaScript', 'EJS', 'Node.js', 'Express.js', 'MongoDB', 'Gemini API'],
+    technologies: [
+      'HTML',
+      'CSS',
+      'JavaScript',
+      'EJS',
+      'Node.js',
+      'Express.js',
+      'MongoDB',
+      'Gemini API'
+    ],
 
-    // No screenshot yet.
-    image: '',
-    imageAlt: '',
+    image: '/asset/images/kisaanScreenshot.png',
+    imageAlt: 'Screenshot of kisaanMItra AI application',
     placeholderIcon: 'sprout',
 
-    // No repository URL has been provided. Left empty on purpose.
-    githubUrl: '',
-    liveUrl: '',
-  },
+    githubUrl: 'https://github.com/Khushalpaunkar/KisaanMitra-AI',
+    liveUrl: 'https://kisaanmitra-ai.onrender.com/'
+},
+
+
 
   {
     title: 'ResumeCraft',
@@ -84,15 +96,17 @@ module.exports = [
       'Multiple selectable resume templates',
     ],
 
-    technologies: ['React', 'JavaScript', 'AI Model API'],
+    technologies: ['React', 'JavaScript', 'AI Model API', 'Node.js',
+      'Express.js',
+      'MongoDB',  'Gemini API'],
 
     // No screenshot yet.
-    image: '',
+    image: '/asset/images/resumeCraftimg.png',
     imageAlt: '',
     placeholderIcon: 'document',
 
     // No repository URL has been provided. Left empty on purpose.
-    githubUrl: '',
+    githubUrl: 'https://github.com/Khushalpaunkar/ResumeCraft',
     liveUrl: '',
   },
 
@@ -109,15 +123,21 @@ module.exports = [
     order: 1,
 
     // Contextual label shown as a badge, e.g. the course this was built for.
-    tags: ['4th Sem'],
+    tags: ['4th Sem Mini project'],
 
-    technologies: ['Express.js', 'MongoDB'],
+    technologies: ['HTML',
+      'CSS',
+      'JavaScript',
+      'EJS',
+      'Node.js',
+      'Express.js',
+      'MongoDB', ],
 
     image: '/asset/images/lost-found.png',
     imageAlt: 'Lost and Found web application interface',
     placeholderIcon: 'search',
 
-    githubUrl: 'https://github.com/chaitanyakamdi/Project-4thSem',
+    githubUrl: 'https://github.com/Khushalpaunkar/Lost-Found-JDCoem',
     liveUrl: '',
   },
 
@@ -142,10 +162,32 @@ module.exports = [
     liveUrl: '',
   },
 
+  // {
+  //   title: 'Portfolio V2',
+  //   shortDescription:
+  //     'This site. Server-rendered with Node.js, Express and EJS, backed by MongoDB for projects and contact messages.',
+  //   category: 'Full-Stack',
+  //   year: 2026,
+  //   featured: false,
+  //   order: 3,
+
+  //   tags: [],
+
+  //   technologies: ['EJS', 'Node.js', 'Express.js', 'MongoDB'],
+
+  //   image: '/asset/images/portfolio.png',
+  //   imageAlt: 'Khushal Paunkar portfolio website',
+  //   placeholderIcon: 'code',
+
+  //   // Not public yet.
+  //   githubUrl: '',
+  //   liveUrl: '',
+  // },
+
   {
-    title: 'Portfolio V2',
+    title: 'CodeOrigin',
     shortDescription:
-      'This site. Server-rendered with Node.js, Express and EJS, backed by MongoDB for projects and contact messages.',
+      'An AI-powered platform that analyzes source code repositories to identify patterns associated with human-written and AI-generated code. ',
     category: 'Full-Stack',
     year: 2026,
     featured: false,
@@ -153,14 +195,17 @@ module.exports = [
 
     tags: [],
 
-    technologies: ['EJS', 'Node.js', 'Express.js', 'MongoDB'],
+    technologies: [ 'HTML' , 'CSS',
+      'JavaScript','EJS', 'Node.js', 'Express.js', 'MongoDB'],
 
-    image: '/asset/images/portfolio.png',
-    imageAlt: 'Khushal Paunkar portfolio website',
+    image: '/asset/images/CodeOrigin.png',
+    imageAlt: 'Screenshot of the CodeOrigin application',
     placeholderIcon: 'code',
 
     // Not public yet.
-    githubUrl: '',
+    githubUrl: 'https://github.com/Khushalpaunkar/CODEORIGIN-AI',
     liveUrl: '',
   },
+
+  
 ];

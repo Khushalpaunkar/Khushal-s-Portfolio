@@ -12,7 +12,7 @@
    07  Hero
    08  About
    09  Skills
-   10  Projects
+   10  Projects   ·  10b  Public project detail page
    11  Education
    12  Contact
    13  Footer
@@ -69,6 +69,14 @@
   --section-y: clamp(5rem, 10vw, 8.5rem);
   --maxw: 1240px;
 
+  /* The stage a screenshot sits on. Screenshots are letterboxed rather than
+     cropped, so the bars around one need a surface that reads as a deliberate
+     bezel instead of a hole. Tokens so the light theme can soften them. */
+  --stage:        rgba(0, 0, 0, .34);
+  --stage-grid:   rgba(255, 255, 255, .05);
+  --stage-inner:  rgba(255, 255, 255, .07);
+  --shot-glow:    rgba(0, 0, 0, .55);
+
   /* Radius */
   --r-sm: 8px;
   --r-md: 12px;
@@ -103,6 +111,11 @@
   --shadow-sm: 0 2px 8px rgba(12, 16, 24, .06);
   --shadow-md: 0 12px 30px rgba(12, 16, 24, .09);
   --shadow-lg: 0 26px 60px rgba(12, 16, 24, .13);
+
+  --stage:        rgba(12, 16, 24, .05);
+  --stage-grid:   rgba(12, 16, 24, .07);
+  --stage-inner:  rgba(12, 16, 24, .09);
+  --shot-glow:    rgba(12, 16, 24, .18);
 }
 
 
@@ -195,7 +208,7 @@ h1, h2, h3, h4 { line-height: 1.15; font-weight: 700; }
 
 .section-head__sub {
   color: var(--muted);
-  max-width: 56ch;
+  max-width: 80ch;
   margin-top: .9rem;
 }
 
@@ -495,12 +508,71 @@ body.nav-open { overflow: hidden; }
   -webkit-text-fill-color: transparent; color: transparent;
 }
 
-.hero__name {
-  font-family: var(--font-mono);
-  font-size: clamp(1rem, 1.6vw, 1.25rem);
-  letter-spacing: .3em; text-transform: uppercase;
-  color: var(--text); margin-bottom: .5rem;
+.hero__identity {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
 }
+
+.hero__intro {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+
+    font-size: clamp(0.7rem, 0.8vw, 0.85rem);
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+
+    color: var(--text-muted);
+}
+
+.hero__intro::before {
+    content: "";
+    width: 28px;
+    height: 1px;
+    background: var(--accent);
+    opacity: 0.8;
+}
+
+.hero__name {
+    margin: 0;
+
+    /* One-line name */
+    white-space: nowrap;
+
+    font-size: clamp(1.8rem, 1.5vw, 1.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.055em;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    color: var(--text);
+}
+
+.hero__name span {
+    color: var(--accent);
+}
+
+
+/* Mobile */
+@media (max-width: 768px) {
+    .hero__name {
+        font-size: clamp(2.2rem, 10vw, 4.5rem);
+        letter-spacing: -0.045em;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero__name {
+        font-size: clamp(1.9rem, 9.5vw, 3rem);
+        letter-spacing: -0.035em;
+    }
+}
+
+
 
 .hero__role {
   display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
@@ -676,45 +748,351 @@ body.nav-open { overflow: hidden; }
 
 /* ============================================================
    10  PROJECTS
-   ============================================================ */
-.projects__featured { display: grid; gap: clamp(1.5rem, 3vw, 2.5rem); margin-bottom: clamp(4rem, 8vw, 6rem); }
+   ------------------------------------------------------------
+   A "case file" showcase in three tiers, chosen from the data
+   rather than hardcoded:
 
-.pf {
-  position: relative; overflow: hidden;
-  display: grid; grid-template-columns: 1.05fr .95fr;
+     .work--hero  featured[0]  media-dominant panel
+     .work--spot  featured[1..] flat spotlight rows
+     .work--card  others       image-first grid
+
+   One rule drives all three: a screenshot is never cropped.
+   The hero sizes the image by its own intrinsic ratio
+   (`.work__frame` has no height of its own), and the tiers
+   that need a fixed box use `contain` inside `.work__frame`,
+   which is a designed bezel rather than a crop window.
+   ============================================================ */
+
+/* --- Section ambience -------------------------------------
+   A soft top wash so the section separates from the sections
+   around it, and a hairline that fades out at both ends. */
+.projects::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 620px;
+  pointer-events: none; z-index: -1;
+  background:
+    radial-gradient(ellipse 62% 48% at 50% -4%, rgba(255,138,0,.10), transparent 70%),
+    radial-gradient(ellipse 40% 34% at 88% 22%, rgba(56,189,248,.07), transparent 72%),
+    linear-gradient(180deg, var(--border) 0 1px, transparent 1px);
+  -webkit-mask-image: linear-gradient(180deg, #000 0 62%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0 62%, transparent 100%);
+}
+[data-theme='light'] .projects::before { opacity: .8; }
+
+/* The tally under the section head, so the count comes from
+   the same array that renders the cards. */
+.work__count {
+  display: flex; align-items: center; flex-wrap: wrap; gap: .55rem;
+  margin-top: 1.5rem; color: var(--dim);
+}
+.work__count-split { color: var(--accent-ink); }
+
+/* --- Panels ------------------------------------------------ */
+.work {
+  position: relative;
+  display: grid;
   border-radius: var(--r-xl);
-  background: var(--surface); border: 1px solid var(--border);
-  transition: transform var(--dur) var(--ease), border-color var(--dur) var(--ease),
+  background: linear-gradient(180deg, var(--surface-2), var(--surface) 46%);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  transition: transform var(--dur) var(--ease),
+              border-color var(--dur) var(--ease),
               box-shadow var(--dur) var(--ease);
 }
-.pf--flip { grid-template-columns: .95fr 1.05fr; }
-.pf--flip .pf__media { order: 2; }
-
-.pf:hover { transform: translateY(-5px); border-color: rgba(255,138,0,.42); box-shadow: 0 24px 60px rgba(0,0,0,.5), 0 0 0 1px var(--accent-glow); }
-
-.pf__media { position: relative; overflow: hidden; min-height: 300px; background: var(--bg-2); }
-.pf__media img { width: 100%; height: 100%; object-fit: cover; transition: transform 900ms var(--ease); }
-.pf:hover .pf__media img { transform: scale(1.06); }
-.pf__media::after {
+/* Pointer spotlight, same idiom as .skill-panel::after. */
+.work::after {
   content: ''; position: absolute; inset: 0;
-  background: linear-gradient(90deg, transparent 55%, var(--bg) 99%);
+  border-radius: inherit; pointer-events: none; z-index: 3;
+  background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 0%),
+              var(--accent-glow), transparent 62%);
+  opacity: 0; transition: opacity var(--dur) var(--ease);
 }
-.pf--flip .pf__media::after { background: linear-gradient(270deg, transparent 55%, var(--bg) 99%); }
+.work:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255,138,0,.34);
+  box-shadow: var(--shadow-lg);
+}
+.work:hover::after { opacity: .55; }
 
-/* Placeholder shown when a project has no screenshot yet */
+.work__stack { display: grid; gap: clamp(1.75rem, 3.2vw, 2.75rem); }
+
+/* Media-dominant: the screenshot gets more of the row than the
+   text does, and the image decides the panel's height. */
+.work--hero { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); }
+
+.work--spot { grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr); }
+.work--spot .work__stage { order: 2; }
+.work--flip { grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr); }
+.work--flip .work__stage { order: 1; }
+.work--flip .work__body { order: 2; }
+
+.work--card {
+  grid-template-rows: auto 1fr;
+  border-radius: var(--r-lg);
+  box-shadow: none;
+}
+.work--card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+
+/* --- The screenshot stage ---------------------------------
+   A dot grid plus two soft glows. Whatever aspect ratio an
+   admin uploads, the bars around it read as a bezel. */
+.work__stage {
+  position: relative;
+  min-width: 0;
+  border-bottom: 1px solid var(--border);
+  background:
+    radial-gradient(300px circle at 16% 0%, rgba(255,138,0,.09), transparent 68%),
+    radial-gradient(280px circle at 92% 100%, rgba(56,189,248,.08), transparent 68%),
+    var(--stage),
+    var(--bg-2);
+  overflow: hidden;
+}
+.work--card .work__stage { aspect-ratio: 16 / 10; }
+.work--spot .work__stage { aspect-ratio: 16 / 10; }
+/* The hero lets the screenshot set the height, so the panel always fits its
+   content and nothing is ever cropped. `align-content` then centres that
+   content if the copy column turns out to be the taller one. */
+.work__stage--tall {
+  aspect-ratio: auto;
+  min-height: 320px;
+  display: grid; align-content: center;
+}
+
+.work__frame {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  padding: clamp(.9rem, 1.7vw, 1.5rem);
+}
+.work__stage--tall .work__frame { position: relative; padding: 0; }
+
+.work__shot {
+  display: block;
+  width: 100%; height: 100%;
+  object-fit: contain;
+  border-radius: var(--r-sm);
+  box-shadow: 0 18px 50px var(--shot-glow);
+  /* The pointer origin is written by projects.js. The scale is
+     small on purpose: enough to read as depth, not enough to
+     look like the screenshot is being cropped. */
+  transform: scale(1);
+  transform-origin: var(--px, 50%) var(--py, 50%);
+  transition: transform 900ms var(--ease);
+}
+/* One screenshot must never be allowed to eat the viewport. CSS recomputes
+   the width from the intrinsic ratio when max-height clamps, so the aspect
+   ratio survives. */
+.work__stage--tall .work__shot { max-height: clamp(280px, 60vh, 560px); }
+.work--card .work__shot,
+.work--spot .work__shot { max-height: 100%; }
+.work:hover .work__shot { transform: scale(1.035); }
+
+/* A hairline around the frame, plus an inner light along the top
+   edge, so a dark screenshot still has a defined boundary. */
+.work__frame::after {
+  content: ''; position: absolute; inset: clamp(.9rem, 1.7vw, 1.5rem);
+  border: 1px solid var(--stage-inner);
+  border-radius: var(--r-sm);
+  box-shadow: inset 0 1px 0 var(--stage-inner);
+  pointer-events: none;
+}
+.work__stage--tall .work__frame::after { inset: 0; border-radius: 0; }
+
+/* projects.js adds .is-failed when a screenshot will not load, so
+   the frame degrades to its placeholder instead of a broken image. */
+.work__stage.is-failed .work__shot { display: none; }
+.work__stage .pf__placeholder { display: none; }
+.work__stage.is-empty .pf__placeholder,
+.work__stage.is-failed .pf__placeholder { display: grid; }
+
+/* --- Browser chrome (hero only) ----------------------------
+   Reuses the hero photo frame's dots so the two read as one
+   family of "a thing running in a window". */
+.work__chrome {
+  display: flex; align-items: center; gap: .45rem;
+  padding: .7rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.work__chrome-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--border-2); flex: none; }
+.work__chrome-dot:nth-child(1) { background: #ff5f57; }
+.work__chrome-dot:nth-child(2) { background: #febc2e; }
+.work__chrome-dot:nth-child(3) { background: #28c840; }
+.work__chrome-url {
+  margin-left: .5rem; min-width: 0;
+  font-family: var(--font-mono); font-size: .7rem; color: var(--dim);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* --- Body -------------------------------------------------- */
+.work__body {
+  position: relative; z-index: 2;
+  min-width: 0;
+  display: flex; flex-direction: column;
+  padding: clamp(1.5rem, 2.6vw, 2.4rem);
+}
+.work--card .work__body { padding: 1.3rem 1.4rem 1.4rem; gap: 0; }
+
+/* Index numeral + kicker + category/year, on one hairline. */
+.work__rail {
+  display: flex; align-items: center; flex-wrap: wrap; gap: .55rem;
+  margin-bottom: 1rem;
+  font-family: var(--font-mono); font-size: var(--fs-label);
+  letter-spacing: .18em; text-transform: uppercase; color: var(--dim);
+}
+.work--card .work__rail { margin-bottom: .7rem; }
+
+.work__index {
+  color: var(--accent-ink);
+  font-weight: 700; letter-spacing: .06em;
+}
+.work__index::after {
+  content: ''; display: inline-block;
+  width: 26px; height: 1px; margin-left: .55rem;
+  background: currentColor; opacity: .45;
+  vertical-align: middle;
+}
+.work__kicker {
+  padding: .22rem .6rem; border-radius: var(--r-pill);
+  background: rgba(255,138,0,.12); border: 1px solid rgba(255,138,0,.28);
+  color: var(--accent-ink); letter-spacing: .14em;
+}
+.work__rail-meta { letter-spacing: .1em; }
+
+.work__title {
+  font-size: clamp(1.5rem, 2.7vw, 2.15rem);
+  letter-spacing: -.025em; line-height: 1.12;
+  margin-bottom: .6rem;
+}
+.work--spot .work__title { font-size: clamp(1.3rem, 2.2vw, 1.75rem); }
+.work--card .work__title { font-size: 1.16rem; line-height: 1.25; }
+
+.work__title-link {
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0 1px;
+  transition: color var(--dur) var(--ease), background-size var(--dur) var(--ease);
+}
+.work__title-link:hover { color: var(--accent-ink); background-size: 100% 1px; }
+
+.work__lede {
+  color: var(--muted);
+  margin-bottom: 1.4rem;
+  max-width: 56ch;
+}
+.work--spot .work__lede { font-size: .96rem; }
+.work--card .work__lede { font-size: .89rem; margin-bottom: 1.1rem; }
+
+/* Challenge / Approach. A full-width strip under the hero rather than a
+   column inside it, so neither paragraph is squeezed into a tall stack.
+   Two labelled columns rather than a case study, so the point lands in
+   two seconds. */
+.work__brief {
+  grid-column: 1 / -1;
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem clamp(1.5rem, 3vw, 2.5rem);
+  padding: 1.4rem clamp(1.5rem, 2.6vw, 2.4rem) 1.6rem;
+  border-top: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(255,138,0,.035), transparent 70%);
+  border-radius: 0 0 var(--r-xl) var(--r-xl);
+}
+.work__brief-item dt {
+  font-family: var(--font-mono); font-size: .66rem;
+  letter-spacing: .18em; text-transform: uppercase; color: var(--accent-ink);
+  margin-bottom: .5rem;
+}
+.work__brief-item dd { font-size: .9rem; color: var(--muted); line-height: 1.7; max-width: 62ch; }
+
+.work__highlights { display: grid; gap: .45rem; margin-bottom: 1.5rem; }
+.work__highlights li {
+  display: grid; grid-template-columns: auto 1fr; gap: .6rem;
+  font-size: .9rem; color: var(--muted);
+}
+.work__highlights i { color: var(--accent-ink); font-size: .68rem; margin-top: .42rem; }
+
+.work__stack { margin-bottom: 1.6rem; gap: .4rem; }
+.work--card .work__stack { margin-bottom: 0; gap: .35rem; }
+.work--card .work__stack .chip { font-size: .72rem; }
+
+/* Actions are pinned to the bottom of the panel, so panels of
+   different content lengths still line their buttons up. */
+.work__actions {
+  display: flex; flex-wrap: wrap; align-items: center; gap: .7rem;
+  margin-top: auto; padding-top: 1.6rem;
+}
+.work--card .work__actions { margin-top: 0; padding-top: 0; }
+
+.work__case {
+  display: inline-flex; align-items: center; gap: .45rem;
+  font-size: .86rem; font-weight: 600; color: var(--accent-ink);
+  transition: gap var(--dur) var(--ease);
+}
+.work__case:hover { gap: .75rem; }
+
+.work--card .work__link {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .42rem .8rem; border-radius: var(--r-pill);
+  border: 1px solid var(--border); background: var(--surface);
+  font-size: .78rem; font-weight: 600; color: var(--muted);
+  transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease),
+              background var(--dur) var(--ease);
+}
+.work--card .work__link:hover { color: var(--text); border-color: var(--border-2); background: var(--surface-2); }
+.work--card .work__case { padding: 0; border: 0; background: none; color: var(--accent-ink); margin-left: auto; }
+
+.work__foot {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  flex-wrap: wrap; gap: .6rem;
+  margin-top: 1.1rem; padding-top: 1.1rem;
+  border-top: 1px solid var(--border);
+}
+
+.work__note {
+  display: flex; align-items: center; gap: .4rem;
+  font-family: var(--font-mono); font-size: .72rem; color: var(--dim);
+  white-space: nowrap;
+}
+.work--card .work__note { font-size: .68rem; }
+
+/* --- Divider + grid ---------------------------------------- */
+.work__divider {
+  display: flex; align-items: center; gap: 1.2rem;
+  margin-block: clamp(3rem, 6vw, 4.5rem) clamp(1.5rem, 3vw, 2.25rem);
+}
+.work__divider::before, .work__divider::after {
+  content: ''; height: 1px; background: var(--border); flex: 1;
+}
+.work__divider span {
+  color: var(--dim); letter-spacing: .2em; white-space: nowrap;
+}
+
+.work__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: clamp(1rem, 1.6vw, 1.4rem);
+}
+
+/* --- Placeholder ------------------------------------------
+   Also used by the public detail page, so it must not depend
+   on the panel it sits in. */
 .pf__placeholder {
-  width: 100%; height: 100%; min-height: 300px;
-  display: grid; place-items: center; gap: .8rem; align-content: center;
+  width: 100%; height: 100%;
+  display: grid; place-items: center; align-content: center; gap: .8rem;
+  padding: 2rem;
   background:
     radial-gradient(circle at 30% 20%, rgba(255,138,0,.14), transparent 55%),
     radial-gradient(circle at 75% 80%, rgba(56,189,248,.12), transparent 55%),
     var(--bg-2);
   color: var(--dim); font-family: var(--font-mono); font-size: .78rem;
-  letter-spacing: .16em; text-transform: center; padding: 2rem;
+  letter-spacing: .16em; text-transform: uppercase; text-align: center;
 }
 .pf__placeholder i { font-size: 1.8rem; color: var(--accent-ink); opacity: .8; }
+.work__stage .pf__placeholder { min-height: 0; }
 
-/* Public single-project page (Phase 17) */
+
+/* ============================================================
+   10b  PUBLIC PROJECT DETAIL PAGE
+   ============================================================ */
 .crumb { margin-bottom: clamp(1.6rem, 3vw, 2.4rem); }
 .crumb__link {
   display: inline-flex; align-items: center; gap: .5rem;
@@ -728,115 +1106,39 @@ body.nav-open { overflow: hidden; }
   font-size: clamp(2.2rem, 6vw, 3.6rem); line-height: 1.1; letter-spacing: -0.02em;
   margin-bottom: 1rem;
 }
-.project-detail__tagline { color: var(--text-soft); font-size: clamp(1.05rem, 2.4vw, 1.25rem); line-height: 1.7; max-width: 60ch; margin-bottom: 2rem; }
+.project-detail__tagline { color: var(--muted); font-size: clamp(1.05rem, 2.4vw, 1.25rem); line-height: 1.7; max-width: 60ch; margin-bottom: 2rem; }
 
+/* Same stage treatment as the section cards, for the same reason:
+   `contain`, not `cover`, so the screenshot is not cropped. */
 .project-detail__media {
   position: relative; overflow: hidden; border-radius: var(--r-xl);
   aspect-ratio: 16 / 9; background: var(--bg-2); border: 1px solid var(--border);
   margin-bottom: 1rem;
+  display: grid; place-items: center;
+  background-image:
+    radial-gradient(300px circle at 16% 0%, rgba(255,138,0,.09), transparent 68%),
+    radial-gradient(280px circle at 92% 100%, rgba(56,189,248,.08), transparent 68%);
 }
-.project-detail__media img { width: 100%; height: 100%; object-fit: cover; }
+.project-detail__media img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  padding: clamp(.9rem, 1.7vw, 1.5rem);
+  box-shadow: 0 18px 50px var(--shot-glow);
+}
 .project-detail__media .pf__placeholder { min-height: 0; height: 100%; }
 
 .project-detail__h2 { margin: 2.4rem 0 1rem; font-size: clamp(1.1rem, 2.4vw, 1.35rem); display: flex; align-items: center; gap: .75rem; }
 .project-detail__h2::before { content: ''; width: .5em; height: .5em; border-radius: 50%; background: var(--accent); flex: none; }
-.project-detail__body p { color: var(--text-soft); line-height: 1.8; max-width: 70ch; }
+.project-detail__body p { color: var(--muted); line-height: 1.8; max-width: 70ch; }
 
 .project-detail__actions { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 2.5rem; }
 
-.pcard__title-link, .pf__title-link { color: inherit; transition: color var(--dur) var(--ease); }
-.pcard__title-link:hover, .pf__title-link:hover { color: var(--accent); }
-
-@media (max-width: 720px) {
-  .project-detail__media { aspect-ratio: 4 / 3; }
-}
-
-.pf__body { position: relative; padding: clamp(1.6rem, 3vw, 2.6rem); display: flex; flex-direction: column; }
-
-.pf__num {
-  position: absolute; top: .4rem; right: 1.2rem; z-index: 0;
-  font-family: var(--font-mono); font-weight: 700;
-  font-size: clamp(4rem, 8vw, 7rem); line-height: 1;
-  color: transparent; -webkit-text-stroke: 1px var(--border-2);
-  opacity: .8; pointer-events: none; user-select: none;
-}
-.pf__body > * { position: relative; z-index: 1; }
-
+/* Shared atoms. Also used by the detail page. */
 .pf__tags { display: flex; flex-wrap: wrap; gap: .45rem; margin-bottom: 1.1rem; }
-.pf__title { font-size: clamp(1.35rem, 2.4vw, 1.9rem); letter-spacing: -.02em; margin-bottom: .5rem; }
-.pf__tagline { color: var(--accent-ink); font-size: .95rem; font-weight: 500; margin-bottom: 1.2rem; }
-
-.pf__ps { display: grid; gap: 1rem; margin-bottom: 1.3rem; }
-.pf__ps-item h4 {
-  font-family: var(--font-mono); font-size: .68rem; letter-spacing: .18em;
-  text-transform: uppercase; color: var(--dim); margin-bottom: .35rem;
-}
-.pf__ps-item p { font-size: .92rem; color: var(--muted); }
-
 .pf__features { display: grid; gap: .5rem; margin-bottom: 1.5rem; }
 .pf__features li { display: flex; gap: .6rem; font-size: .9rem; color: var(--muted); }
 .pf__features i { color: var(--accent-ink); margin-top: .3rem; font-size: .7rem; }
-
-.pf__stack { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1.6rem; }
-
-.pf__actions { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: auto; }
-
-.pf__note {
-  font-size: .78rem; color: var(--dim); font-family: var(--font-mono);
-  display: flex; align-items: center; gap: .4rem;
-}
-
-/* --- More projects grid --- */
-.projects__divider {
-  display: flex; align-items: center; gap: 1.2rem; margin-bottom: 2.2rem;
-}
-.projects__divider::before, .projects__divider::after {
-  content: ''; height: 1px; background: var(--border); flex: 1;
-}
-.projects__divider span {
-  font-family: var(--font-mono); font-size: .72rem;
-  letter-spacing: .2em; text-transform: uppercase; color: var(--dim);
-  white-space: nowrap;
-}
-
-.pgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1.2rem; }
-
-.pcard {
-  position: relative; overflow: hidden;
-  display: flex; flex-direction: column;
-  border-radius: var(--r-lg);
-  background: var(--surface); border: 1px solid var(--border);
-  transition: transform var(--dur) var(--ease), border-color var(--dur) var(--ease),
-              box-shadow var(--dur) var(--ease);
-}
-.pcard:hover { transform: translateY(-5px); border-color: var(--border-2); box-shadow: var(--shadow-md); }
-
-.pcard__media { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: var(--bg-2); }
-.pcard__media img { width: 100%; height: 100%; object-fit: cover; transition: transform 800ms var(--ease); }
-.pcard:hover .pcard__media img { transform: scale(1.07); }
-.pcard__media::after {
-  content: ''; position: absolute; inset: 0;
-  background: linear-gradient(180deg, transparent 45%, rgba(0,0,0,.5));
-}
-.pcard__media .pf__placeholder { min-height: 0; aspect-ratio: 16 / 10; }
-
-.pcard__body { padding: 1.25rem 1.35rem 1.4rem; display: flex; flex-direction: column; flex: 1; }
-.pcard__title { font-size: 1.08rem; margin-bottom: .4rem; }
-.pcard__text { font-size: .88rem; color: var(--muted); margin-bottom: 1rem; flex: 1; }
-.pcard__foot { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
-.pcard__foot .chip { font-size: .72rem; }
-
-/* Technology chips now come from data, so a card can hold several. The stack
-   takes its own row to stop them squeezing the link beside them. */
-.pcard__stack { flex: 1 1 100%; margin-bottom: 0; gap: .35rem; }
-.pcard__links { display: flex; align-items: center; gap: 1.1rem; margin-left: auto; }
-.pcard__link {
-  display: inline-flex; align-items: center; gap: .4rem;
-  font-size: .84rem; font-weight: 600; color: var(--accent-ink);
-  transition: gap var(--dur) var(--ease);
-}
-.pcard__link:hover { gap: .7rem; }
-
+.pf__stack { display: flex; flex-wrap: wrap; gap: .4rem; }
 
 /* ============================================================
    11  EDUCATION
@@ -1191,16 +1493,40 @@ textarea.input { resize: vertical; min-height: 120px; }
   .hero__grid, .about__grid, .contact__grid { grid-template-columns: 1fr; }
   .hero__visual { order: -1; }
   .frame { max-width: 340px; }
-  .pf, .pf--flip { grid-template-columns: 1fr; }
-  .pf--flip .pf__media { order: 0; }
-  .pf__media, .pf__placeholder { min-height: 240px; aspect-ratio: 16 / 9; }
-  .pf__media::after, .pf--flip .pf__media::after {
-    background: linear-gradient(180deg, transparent 55%, var(--bg) 99%);
-  }
+
+  /* Still two columns, just with the media leading: side-by-side beats a
+     full-width banner because it keeps the copy in view with the image. */
+  .work--hero, .work--spot, .work--flip { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); }
+  .work--spot .work__stage, .work--flip .work__stage { order: 0; }
+
+  .work__frame { padding: 1rem; }
+  .work__frame::after { inset: 1rem; }
+
+  .work__grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+
   .footer__grid { grid-template-columns: 1fr 1fr; }
 }
 
 @media (max-width: 900px) {
+  /* Panels stack with the screenshot on top. Two columns stop being readable
+     well before the layout does, and a full-width banner would make the
+     section two screens tall. */
+  .work--hero, .work--spot, .work--flip { grid-template-columns: 1fr; }
+  .work--spot .work__stage, .work--flip .work__stage { order: 0; }
+  .work__body { padding: clamp(1.4rem, 4vw, 2rem); }
+
+  /* The hero switches to a fixed box here. Intrinsic height would put a
+     1.2-aspect screenshot a full screen above the copy on a tablet, and a
+     shorter box would letterbox a square-ish screenshot badly. 4/3 is the
+     widest ratio that keeps the bars under ~6% of the box on either side. */
+  .work__stage--tall { min-height: 0; aspect-ratio: 4 / 3; }
+  .work__stage--tall .work__frame { position: absolute; padding: 1rem; }
+  .work__stage--tall .work__frame::after { inset: 1rem; border-radius: var(--r-sm); }
+  /* The 4/3 box already caps the height here. Leaving the viewport cap on
+     would shrink the image *inside* a box that is already sized, which is
+     the letterboxing this section is trying to avoid. */
+  .work__stage--tall .work__shot { max-height: none; }
+
   .nav__menu {
     position: fixed; top: 0; right: 0; z-index: 99;
     display: flex; flex-direction: column; align-items: stretch; gap: 0;
@@ -1243,12 +1569,35 @@ textarea.input { resize: vertical; min-height: 120px; }
   html:not(.js) .nav__indicator { display: none; }
 }
 
+@media (max-width: 720px) {
+  .project-detail__media { aspect-ratio: 4 / 3; }
+}
+
 @media (max-width: 640px) {
+  .work__frame { padding: .85rem; }
+  .work__frame::after { inset: .85rem; }
+  .work__stage--tall .work__frame { padding: .85rem; }
+  .work__stage--tall .work__frame::after { inset: .85rem; }
+
+  .work__brief { grid-template-columns: 1fr; gap: 1.1rem; padding: 1.2rem 1.2rem 1.3rem; }
+  .work__chrome { padding: .6rem .8rem; }
+  .work--card .work__body { padding: 1.15rem 1.2rem 1.25rem; }
+  .work__actions { gap: .6rem; }
+  .work__foot { align-items: flex-start; }
+
   .footer__grid { grid-template-columns: 1fr; }
   .footer__bottom { flex-direction: column; align-items: flex-start; }
   .tl-item__card { grid-template-columns: 1fr; }
   .tl-item__logo { width: 46px; height: 46px; }
   .hero__meta { gap: 1rem; }
+}
+
+@media (max-width: 480px) {
+  /* Nothing is forced onto one line here: the case-study link drops under the
+     repo links rather than overflowing. */
+  .work--card .work__case { margin-left: 0; }
+  .work--card .work__actions { gap: .55rem; }
+  .work__actions .btn { flex: 1 1 auto; }
 }
 
 /* --- Motion safety: one switch disables everything --- */
@@ -1277,9 +1626,16 @@ textarea.input { resize: vertical; min-height: 120px; }
     transition: none !important;
   }
   .js .hero__content > *, .js .hero__visual { animation: none !important; }
+
+  /* The screenshot zoom is a reveal, not decoration, so it goes entirely
+     rather than being sped up to 1ms. */
+  .work:hover .work__shot, .work--card:hover .work__shot { transform: none; }
 }
 
 /* The pointer glow is pointless on touch devices. */
 @media (hover: none), (pointer: coarse) {
   .bg__glow { display: none; }
+  /* Touch has no hover, so a :hover transform can latch on after a tap and
+     leave the screenshot permanently zoomed. */
+  .work:hover .work__shot { transform: none; }
 }

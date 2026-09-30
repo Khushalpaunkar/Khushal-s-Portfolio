@@ -1,60 +1,86 @@
 <%
   /* One project in the "More projects" grid.
 
-     Locals: project, techIcon, placeholderIcon.
+     Locals:
+       project         - the project document (or normalised seed object)
+       n               - 1-based position in the whole Projects section
+       techIcon,
+       placeholderIcon - helpers from utils/icons
+
      Same rules as the featured card: no image means a placeholder, and no URL
-     means no button. */
+     means no button. The case-study link is the exception, because the detail
+     page resolves for every project — so a card always has somewhere to go. */
   const hasImage = Boolean(project.image);
   const links = [
-    project.githubUrl ? { href: project.githubUrl, label: 'GitHub' } : null,
-    project.liveUrl ? { href: project.liveUrl, label: 'Live Demo' } : null,
+    project.githubUrl ? { href: project.githubUrl, label: 'GitHub', icon: 'fab fa-github' } : null,
+    project.liveUrl ? { href: project.liveUrl, label: 'Live', icon: 'fas fa-arrow-up-right-from-square' } : null,
   ].filter(Boolean);
+
+  /* category, year and any contextual tags on one hairline-separated line.
+     The category defaults to "Other" in the schema, so this is rarely empty. */
+  const meta = [project.category, project.year].concat(project.tags || []).filter(Boolean);
 %>
-<article class="pcard" id="project-<%= project.slug %>" data-reveal>
-  <div class="pcard__media">
-    <% if (hasImage) { %>
-      <img src="<%= project.image %>" alt="<%= project.imageAlt %>" loading="lazy" decoding="async">
-    <% } else { %>
+<article class="work work--card" id="project-<%= project.slug %>" data-reveal>
+
+  <div class="work__stage<%= hasImage ? '' : ' is-empty' %>" data-shot>
+    <div class="work__frame">
+      <% if (hasImage) { %>
+        <img class="work__shot" src="<%= project.image %>" alt="<%= project.imageAlt %>"
+             loading="lazy" decoding="async">
+      <% } %>
+
+      <%# Present in every card so a screenshot that fails to load falls back
+          to the labelled placeholder rather than a broken frame. %>
       <div class="pf__placeholder">
         <i class="<%= placeholderIcon(project.placeholderIcon) %>" aria-hidden="true"></i>
         <span>No screenshot yet</span>
       </div>
-    <% } %>
+    </div>
   </div>
 
-  <div class="pcard__body">
-    <div class="pf__tags">
-      <% if (project.category) { %><span class="badge badge--muted"><%= project.category %></span><% } %>
-      <% (project.tags || []).forEach(function (tag) { %>
-        <span class="badge badge--muted"><%= tag %></span>
-      <% }); %>
-      <% if (project.year) { %><span class="badge badge--muted"><%= project.year %></span><% } %>
-    </div>
+  <div class="work__body">
+    <p class="work__rail">
+      <b class="work__index"><%= String(n).padStart(2, '0') %></b>
+      <% if (meta.length) { %>
+        <span class="work__rail-meta"><%= meta.join('  ·  ') %></span>
+      <% } %>
+    </p>
 
-    <h3 class="pcard__title"><a class="pcard__title-link" href="/projects/<%= project.slug %>"><%= project.title %></a></h3>
+    <h3 class="work__title">
+      <a class="work__title-link" href="/projects/<%= project.slug %>"><%= project.title %></a>
+    </h3>
+
     <% if (project.shortDescription) { %>
-      <p class="pcard__text"><%= project.shortDescription %></p>
+      <p class="work__lede"><%= project.shortDescription %></p>
     <% } %>
 
-    <div class="pcard__foot">
+    <div class="work__actions">
+      <% if (links.length) { %>
+        <% links.forEach(function (link) { %>
+          <a class="work__link" href="<%= link.href %>" target="_blank" rel="noopener">
+            <i class="<%= link.icon %>" aria-hidden="true"></i> <%= link.label %>
+          </a>
+        <% }); %>
+      <% } %>
+
+      <a class="work__link work__case" href="/projects/<%= project.slug %>">
+        Case study <i class="fas fa-arrow-right" aria-hidden="true"></i>
+      </a>
+    </div>
+
+    <%# Anchored to the bottom of the card, so a card with no technologies
+        leaves a clean edge instead of a hole. %>
+    <div class="work__foot">
       <% if ((project.technologies || []).length) { %>
-        <div class="pf__stack pcard__stack">
+        <div class="pf__stack work__stack">
           <% project.technologies.forEach(function (tech) { %>
             <span class="chip"><i class="<%= techIcon(tech) %>" aria-hidden="true"></i> <%= tech %></span>
           <% }); %>
         </div>
       <% } %>
 
-      <% if (links.length) { %>
-        <div class="pcard__links">
-          <% links.forEach(function (link) { %>
-            <a class="pcard__link" href="<%= link.href %>" target="_blank" rel="noopener">
-              <%= link.label %> <i class="fas fa-arrow-right" aria-hidden="true"></i>
-            </a>
-          <% }); %>
-        </div>
-      <% } else { %>
-        <span class="pf__note"><i class="fas fa-lock" aria-hidden="true"></i> Link soon</span>
+      <% if (!links.length) { %>
+        <p class="work__note"><i class="fas fa-lock" aria-hidden="true"></i> Public link coming soon</p>
       <% } %>
     </div>
   </div>

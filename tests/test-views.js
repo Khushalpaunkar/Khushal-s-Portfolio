@@ -131,7 +131,7 @@ const baseData = () => ({
 
   // Content preservation: nothing from the previously hardcoded markup is lost.
   for (const phrase of ['KisaanMitra AI', 'ResumeCraft', 'Lost &amp; Found', 'Random Joke Generator',
-                        'Portfolio V2', '4th Sem', 'Government scheme lookups',
+                        'CodeOrigin', '4th Sem', 'Government scheme lookups',
                         'Natural-language prompt input']) {
     line(`content kept: "${phrase}"`, html.includes(phrase));
   }

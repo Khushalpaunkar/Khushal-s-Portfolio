@@ -21,7 +21,9 @@
 
 const crypto = require('crypto');
 const session = require('express-session');
-const MongoStore = require('connect-mongo');
+// connect-mongo@6 ships a namespace object, so the class must be pulled out of
+// it — the bare module has no static create().
+const { MongoStore } = require('connect-mongo');
 const mongoose = require('mongoose');
 const db = require('../config/db');
 
@@ -40,7 +42,11 @@ function chooseStore() {
   }
 
   return MongoStore.create({
-    mongooseConnection: mongoose.connection,
+    // connect-mongo@6 dropped the old `mongooseConnection` option and wants a
+    // real MongoClient — asPromise() resolves to the Mongoose connection, not
+    // the client, so use getClient(). This reuses the existing pool instead of
+    // opening a second one. Safe here: this only runs once isDbReady() is true.
+    client: mongoose.connection.getClient(),
     touchAfter: 24 * 3600, // seconds — avoids a write per request
   });
 }

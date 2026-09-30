@@ -1,94 +1,138 @@
 <%
-  /* One featured project card.
+  /* A featured project, in one of two sizes.
 
      Locals:
        project      - the project document (or normalised seed object)
-       index        - zero-based position, used for the number and to alternate
-                      the flipped layout
+       n            - 1-based position in the whole Projects section, used for
+                       the index numeral in the rail
+       variant      - 'hero'  the first project: media-dominant, the largest
+                                  object on the page
+                    'spot'  every other featured project: a flat spotlight row
+       flip         - 'spot' only. Puts the media on the left so consecutive
+                       spotlights zig-zag instead of stacking identically
        techIcon,
        placeholderIcon  - helpers from utils/icons
 
      A missing image renders a labelled placeholder, and a missing URL renders
      no button. Neither case may produce a broken image or a dead link. */
-  const flip = index % 2 === 1;
+  const isHero = variant !== 'spot';
   const hasImage = Boolean(project.image);
   const links = [
     project.githubUrl ? { href: project.githubUrl, label: 'Source Code', icon: 'fab fa-github' } : null,
     project.liveUrl ? { href: project.liveUrl, label: 'Live Demo', icon: 'fas fa-arrow-up-right-from-square' } : null,
   ].filter(Boolean);
+
+  /* A feature list is what a spotlight is for, but printing all twelve would
+     turn the section into a case study. Capped, not hidden. */
+  const features = (project.features || []).slice(0, 3);
+  const rail = [project.category, project.year].filter(Boolean).join('  ·  ');
+
+  /* The chrome bar sells the screenshot as a running app, but only the hero is
+     large enough for it to look deliberate. It shows the live host when there is
+     one and the project route when there is not — never an invented URL. */
+  const host = (project.liveUrl || '')
+    .replace(/^https?:\/\//, '')
+    .replace(/\/+$/, '');
+  const address = host || String(project.slug || '').replace(/^.*\//, '');
 %>
-<article class="pf <%= flip ? 'pf--flip' : '' %>" id="project-<%= project.slug %>" data-reveal>
-  <div class="pf__media">
-    <% if (hasImage) { %>
-      <img src="<%= project.image %>" alt="<%= project.imageAlt %>" loading="lazy" decoding="async">
-    <% } else { %>
+<article class="<%= isHero ? 'work work--hero' : 'work work--spot' %><%= (!isHero && flip) ? ' work--flip' : '' %>"
+         id="project-<%= project.slug %>" data-reveal>
+
+  <div class="work__stage<%= isHero ? ' work__stage--tall' : '' %><%= hasImage ? '' : ' is-empty' %>" data-shot>
+    <% if (isHero) { %>
+      <div class="work__chrome" aria-hidden="true">
+        <i class="work__chrome-dot"></i><i class="work__chrome-dot"></i><i class="work__chrome-dot"></i>
+        <span class="work__chrome-url"><%= address %></span>
+      </div>
+    <% } %>
+
+    <div class="work__frame">
+      <% if (hasImage) { %>
+        <img class="work__shot" src="<%= project.image %>" alt="<%= project.imageAlt %>"
+             loading="lazy" decoding="async">
+      <% } %>
+
+      <%# Always present so a screenshot that 404s falls back to the same
+          labelled placeholder instead of leaving a broken frame. Shown by
+          .is-empty here, or by .is-failed from projects.js. %>
       <div class="pf__placeholder">
         <i class="<%= placeholderIcon(project.placeholderIcon) %>" aria-hidden="true"></i>
-        <span>Screenshot coming soon</span>
+        <span><%= isHero ? 'Screenshot coming soon' : 'No screenshot yet' %></span>
       </div>
-    <% } %>
+    </div>
   </div>
 
-  <div class="pf__body">
-    <span class="pf__num" aria-hidden="true"><%= String(index + 1).padStart(2, '0') %></span>
+  <div class="work__body">
+    <p class="work__rail">
+      <b class="work__index"><%= String(n).padStart(2, '0') %></b>
+      <span class="work__kicker"><%= isHero ? 'Featured' : 'Also featured' %></span>
+      <% if (rail) { %><span class="work__rail-meta"><%= rail %></span><% } %>
+    </p>
 
-    <div class="pf__tags">
-      <span class="badge badge--accent">Featured</span>
-      <% if (project.category) { %><span class="badge badge--muted"><%= project.category %></span><% } %>
-      <% (project.tags || []).forEach(function (tag) { %>
-        <span class="badge badge--muted"><%= tag %></span>
-      <% }); %>
-      <% if (project.year) { %><span class="badge badge--muted"><%= project.year %></span><% } %>
-    </div>
+    <h3 class="work__title">
+      <a class="work__title-link" href="/projects/<%= project.slug %>"><%= project.title %></a>
+    </h3>
 
-    <h3 class="pf__title"><a class="pf__title-link" href="/projects/<%= project.slug %>"><%= project.title %></a></h3>
     <% if (project.shortDescription) { %>
-      <p class="pf__tagline"><%= project.shortDescription %></p>
+      <p class="work__lede"><%= project.shortDescription %></p>
     <% } %>
 
-    <% if (project.problem || project.solution) { %>
-      <div class="pf__ps">
-        <% if (project.problem) { %>
-          <div class="pf__ps-item">
-            <h4>Problem</h4>
-            <p><%= project.problem %></p>
-          </div>
-        <% } %>
-        <% if (project.solution) { %>
-          <div class="pf__ps-item">
-            <h4>Solution</h4>
-            <p><%= project.solution %></p>
-          </div>
-        <% } %>
-      </div>
-    <% } %>
-
-    <% if ((project.features || []).length) { %>
-      <ul class="pf__features">
-        <% project.features.forEach(function (feature) { %>
-          <li><i class="fa-solid fa-circle" aria-hidden="true"></i> <%= feature %></li>
+    <% if (features.length) { %>
+      <ul class="work__highlights">
+        <% features.forEach(function (feature) { %>
+          <li><i class="fa-solid fa-check" aria-hidden="true"></i> <%= feature %></li>
         <% }); %>
       </ul>
     <% } %>
 
     <% if ((project.technologies || []).length) { %>
-      <div class="pf__stack">
+      <div class="pf__stack work__stack">
         <% project.technologies.forEach(function (tech) { %>
           <span class="chip"><i class="<%= techIcon(tech) %>" aria-hidden="true"></i> <%= tech %></span>
         <% }); %>
       </div>
     <% } %>
 
-    <div class="pf__actions">
+    <div class="work__actions">
       <% if (links.length) { %>
-        <% links.forEach(function (link) { %>
-          <a class="btn btn--ghost btn--sm" href="<%= link.href %>" target="_blank" rel="noopener">
+        <% links.forEach(function (link, i) { %>
+          <a class="btn <%= isHero && i === 0 ? 'btn--primary' : 'btn--ghost' %>"
+             href="<%= link.href %>" target="_blank" rel="noopener">
             <i class="<%= link.icon %>" aria-hidden="true"></i> <%= link.label %>
           </a>
         <% }); %>
-      <% } else { %>
-        <p class="pf__note"><i class="fas fa-lock" aria-hidden="true"></i> Repository link coming soon</p>
+      <% } %>
+
+      <%# The detail page always resolves, so this link is always safe. It is
+          the card's primary affordance when a project has no public repo yet. %>
+      <a class="work__case" href="/projects/<%= project.slug %>">
+        Case study <i class="fas fa-arrow-right" aria-hidden="true"></i>
+      </a>
+
+      <% if (!links.length) { %>
+        <p class="work__note"><i class="fas fa-lock" aria-hidden="true"></i> Repository link coming soon</p>
       <% } %>
     </div>
   </div>
+
+  <%# Full-width strip under the panel, not a column inside it. A narrow
+      body column turns these two paragraphs into a tall stack, which
+      squeezes the screenshot into letterbox bars — exactly what this layout
+      exists to avoid. %>
+  <% if (isHero && (project.problem || project.solution)) { %>
+    <dl class="work__brief">
+      <% if (project.problem) { %>
+        <div class="work__brief-item">
+          <dt>Challenge</dt>
+          <dd><%= project.problem %></dd>
+        </div>
+      <% } %>
+      <% if (project.solution) { %>
+        <div class="work__brief-item">
+          <dt>Approach</dt>
+          <dd><%= project.solution %></dd>
+        </div>
+      <% } %>
+    </dl>
+  <% } %>
 </article>
