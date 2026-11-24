@@ -3,20 +3,9 @@
  *
  * Session middleware for the admin area.
  *
- * Two deliberate design decisions:
- *
- *   * The store is chosen lazily on the first request. The database connection
- *     is established inside server.js's start() (before listen), so by the time
- *     any request arrives a live Mongoose connection either exists or never
- *     will. MongoStore is only ever constructed against a connected client;
- *     otherwise a MemoryStore keeps the admin routes functional offline — and
- *     since login requires the Admin collection anyway, an offline login is
- *     rejected gracefully rather than crashing.
- *
- *   * A missing SESSION_SECRET does not prevent the server from booting. A
- *     per-boot random secret is used instead, with a loud warning: sessions
- *     then simply do not survive a restart. This mirrors the non-fatal
- *     database philosophy — but production must set a real secret.
+ * Production requires both a stable session secret and a live MongoDB-backed
+ * store. Offline admin requests are rejected while the public site remains
+ * available; the store is selected again after the database recovers.
  */
 
 const crypto = require('crypto');
@@ -33,10 +22,21 @@ const SESSION_NAME = 'khushal.sid';
 const MAX_AGE_MS = Number(process.env.SESSION_MAX_AGE_MS) || 8 * 60 * 60 * 1000; // 8h
 
 let sessionMiddleware = null;
+let sessionStoreMode = null;
 let warnedAboutSecret = false;
+let fallbackSecret = null;
 
-function chooseStore() {
-  if (!db.isDbReady()) {
+function assertSessionConfig() {
+  if (isProduction && !(process.env.SESSION_SECRET || '').trim()) {
+    throw new Error('[session] SESSION_SECRET is required in production.');
+  }
+}
+
+function chooseStore(databaseReady) {
+  if (!databaseReady) {
+    if (isProduction) {
+      throw new Error('[session] MongoDB must be connected before creating production sessions.');
+    }
     console.warn('[session] MongoDB offline — using an in-memory session store.');
     return new session.MemoryStore();
   }
@@ -52,7 +52,10 @@ function chooseStore() {
 }
 
 function getSessionMiddleware() {
-  if (sessionMiddleware) return sessionMiddleware;
+  assertSessionConfig();
+  const databaseReady = db.isDbReady();
+  const storeMode = databaseReady ? 'mongo' : 'memory';
+  if (sessionMiddleware && sessionStoreMode === storeMode) return sessionMiddleware;
 
   const secret = process.env.SESSION_SECRET;
   if (!secret && !warnedAboutSecret) {
@@ -62,11 +65,12 @@ function getSessionMiddleware() {
         'Sessions will not survive a restart. Set it in production.'
     );
   }
+  if (!secret && !fallbackSecret) fallbackSecret = crypto.randomBytes(32).toString('hex');
 
   sessionMiddleware = session({
     name: SESSION_NAME,
-    secret: secret || crypto.randomBytes(32).toString('hex'),
-    store: chooseStore(),
+    secret: secret || fallbackSecret,
+    store: chooseStore(databaseReady),
     resave: false,
     saveUninitialized: false,
     rolling: true,
@@ -77,6 +81,7 @@ function getSessionMiddleware() {
       maxAge: MAX_AGE_MS,
     },
   });
+  sessionStoreMode = storeMode;
 
   return sessionMiddleware;
 }
@@ -86,10 +91,17 @@ function getSessionMiddleware() {
  * store selection happens against a settled database state.
  */
 function sessionMiddlewareHandler(req, res, next) {
+  if (isProduction && !db.isDbReady()) {
+    return res
+      .status(503)
+      .set('Retry-After', '5')
+      .send('Admin sessions are temporarily unavailable while the database reconnects.');
+  }
   getSessionMiddleware()(req, res, next);
 }
 
 module.exports = sessionMiddlewareHandler;
 module.exports.getSessionMiddleware = getSessionMiddleware;
+module.exports.assertSessionConfig = assertSessionConfig;
 module.exports.SESSION_NAME = SESSION_NAME;
 module.exports.MAX_AGE_MS = MAX_AGE_MS;

@@ -42,6 +42,15 @@ async function run() {
       const error = new Error(`Failed to connect using ${process.env.MONGODB_URI}`);
       error.name = 'MongoServerSelectionError';
       error.code = 'ECONNREFUSED';
+      const serverError = new Error(`Driver detail containing ${secret}`);
+      serverError.name = 'MongoNetworkError';
+      serverError.code = 'ENOTFOUND';
+      error.reason = {
+        type: 'ReplicaSetNoPrimary',
+        servers: new Map([
+          ['cluster.example.invalid:27017', { type: 'Unknown', error: serverError }],
+        ]),
+      };
       throw error;
     };
 
@@ -50,6 +59,8 @@ async function run() {
       'connection logs expose error category but not URI credentials',
       output.some((line) => /MongoServerSelectionError/.test(line)) &&
         output.some((line) => /ECONNREFUSED/.test(line)) &&
+        output.some((line) => /ReplicaSetNoPrimary/.test(line)) &&
+        output.some((line) => /ENOTFOUND/.test(line)) &&
         !output.join('\n').includes(secret)
     );
     check(

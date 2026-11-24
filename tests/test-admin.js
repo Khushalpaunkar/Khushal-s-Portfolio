@@ -13,6 +13,7 @@
 
 const fs = require('fs');
 const http = require('http');
+const { spawnSync } = require('child_process');
 
 const ROOT = require('path').resolve(__dirname, '..') + '/';
 // NOTE: portable — resolves to the project root relative to this file.
@@ -35,7 +36,11 @@ const server = read('server.js');
 const adminRoutes = read('routes/adminRoutes.js');
 const sessionMw = read('middleware/session.js');
 
-check('session mounted before routes', server.indexOf('app.use(sessionMiddleware)') < server.indexOf("app.use('/', indexRoutes)"));
+check(
+  'session middleware scoped to admin routes',
+  server.indexOf("app.use('/admin', sessionMiddleware)") < server.indexOf('app.use(adminRoutes)') &&
+    !/app\.use\(sessionMiddleware\)/.test(server)
+);
 check('adminRoutes mounted', /app\.use\(adminRoutes\)/.test(server));
 check('admin router protects /admin', /router\.get\('\/admin', requireAdmin/.test(adminRoutes));
 check('login POST is rate limited', /loginLimiter/.test(adminRoutes));
@@ -50,7 +55,27 @@ check('saveUninitialized false', /saveUninitialized: false/.test(sessionMw));
 check('custom cookie name', /name: SESSION_NAME/.test(sessionMw));
 check('store is MongoStore when DB ready', /MongoStore\.create/.test(sessionMw));
 check('MemoryStore fallback offline', /MemoryStore\(\)/.test(sessionMw));
+check('production requires a configured session secret', /SESSION_SECRET is required in production/.test(sessionMw));
+check('session middleware reselects store after DB state changes', /sessionStoreMode === storeMode/.test(sessionMw));
 check('rolling session on activity', /rolling: true/.test(sessionMw));
+const productionSessionGuard = spawnSync(
+  process.execPath,
+  [
+    '-e',
+    "process.env.NODE_ENV='production';delete process.env.SESSION_SECRET;const s=require('./middleware/session');try{s.assertSessionConfig();process.exitCode=2}catch(e){process.exitCode=e.message==='[session] SESSION_SECRET is required in production.'?0:3}",
+  ],
+  { cwd: ROOT, encoding: 'utf8' }
+);
+check('missing production session secret is rejected without fallback', productionSessionGuard.status === 0);
+const productionStoreGuard = spawnSync(
+  process.execPath,
+  [
+    '-e',
+    "process.env.NODE_ENV='production';process.env.SESSION_SECRET='test-secret';const db=require('./config/db');db.isDbReady=()=>false;const s=require('./middleware/session');try{s.getSessionMiddleware();process.exitCode=2}catch(e){process.exitCode=e.message==='[session] MongoDB must be connected before creating production sessions.'?0:3}",
+  ],
+  { cwd: ROOT, encoding: 'utf8' }
+);
+check('production never falls back to MemoryStore', productionStoreGuard.status === 0);
 
 console.log('  Phase 8 — login defences:');
 const auth = read('controllers/authController.js');

@@ -122,9 +122,6 @@ app.set('views', path.join(__dirname, 'views'));
 /* -------- Caching policy for dynamic responses -------------------- */
 app.use(cacheControl);
 
-/* -------- Session (admin area) — after static, before routes ----------- */
-app.use(sessionMiddleware);
-
 /* -------- Site settings for every page render ---------------------------
    Puts the effective contact/social settings on res.locals so the home page,
    nav and footer never hardcode them (admin can edit them in /admin/settings).
@@ -170,6 +167,7 @@ app.get('/health', (req, res) => {
 
 app.use('/', indexRoutes);
 app.use(contactRoutes);
+app.use('/admin', sessionMiddleware);
 app.use(adminRoutes);
 app.use(metaRoutes);
 
@@ -183,6 +181,14 @@ app.use(errorHandler);
    Boot
    ------------------------------------------------------------------ */
 async function start() {
+  try {
+    sessionMiddleware.assertSessionConfig();
+  } catch (error) {
+    console.error(error.message);
+    process.exitCode = 1;
+    return;
+  }
+
   await connectDB();
 
   const server = app.listen(PORT, () => {

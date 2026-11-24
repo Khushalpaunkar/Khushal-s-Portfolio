@@ -26,19 +26,56 @@ function clearReconnectTimer() {
   reconnectTimer = null;
 }
 
+function safeLabel(value) {
+  if (typeof value === 'number' && Number.isFinite(value)) return String(value);
+  if (typeof value !== 'string') return '';
+  return value.replace(/[^a-zA-Z0-9_.:-]/g, '').slice(0, 128);
+}
+
 function describeError(error) {
-  const name =
-    error && typeof error.name === 'string'
-      ? error.name.replace(/[^a-zA-Z0-9_$.-]/g, '').slice(0, 80)
-      : 'UnknownError';
-  const rawCode = error && (error.code || (error.cause && error.cause.code));
-  const code =
-    typeof rawCode === 'number' && Number.isFinite(rawCode)
-      ? String(rawCode)
-      : typeof rawCode === 'string' && /^[a-zA-Z0-9_-]{1,64}$/.test(rawCode)
-        ? rawCode
-        : '';
-  return code ? `${name}, code=${code}` : name;
+  const details = {
+    type: safeLabel(error && error.name) || 'UnknownError',
+  };
+  let cause = error;
+  for (let depth = 0; cause && depth < 3; depth += 1) {
+    const code = safeLabel(cause.code);
+    if (code) {
+      details.code = code;
+      break;
+    }
+    cause = cause.cause;
+  }
+
+  const topology = error && error.reason;
+  if (topology && typeof topology.type === 'string') {
+    details.topology = safeLabel(topology.type);
+  }
+  if (topology && topology.servers && typeof topology.servers[Symbol.iterator] === 'function') {
+    details.servers = Array.from(topology.servers.entries())
+      .slice(0, 10)
+      .map(([address, server]) => {
+        const serverDetails = {
+          address: safeLabel(address),
+          type: safeLabel(server && server.type) || 'Unknown',
+        };
+        if (server && server.error) {
+          serverDetails.error = {
+            type: safeLabel(server.error.name) || 'UnknownError',
+          };
+          let serverCause = server.error;
+          for (let depth = 0; serverCause && depth < 3; depth += 1) {
+            const code = safeLabel(serverCause.code);
+            if (code) {
+              serverDetails.error.code = code;
+              break;
+            }
+            serverCause = serverCause.cause;
+          }
+        }
+        return serverDetails;
+      });
+  }
+  return details;
 }
 
 function scheduleReconnect() {
@@ -99,10 +136,7 @@ async function connectOnce() {
     return true;
   } catch (error) {
     dbReady = false;
-    console.error(
-      `[db] Connection attempt failed (${describeError(error)}). ` +
-        'Check MONGODB_URI formatting and database network/access settings.'
-    );
+    console.error('[db] Connection attempt failed:', JSON.stringify(describeError(error)));
     scheduleReconnect();
     return false;
   }
