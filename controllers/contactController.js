@@ -90,10 +90,14 @@ async function contactController(req, res) {
   /* --- Persist. --- */
   try {
     await message.save();
-    console.log(`[contact] New message from ${message.email}`);
+    console.log('[contact] New message saved.');
     return res.status(201).json({ ok: true, message: 'Message sent successfully.' });
   } catch (error) {
-    console.error('[contact] Failed to save message:', error.message);
+    const errorType =
+      error && typeof error.name === 'string'
+        ? error.name.replace(/[^a-zA-Z0-9_$.-]/g, '').slice(0, 80)
+        : 'UnknownError';
+    console.error(`[contact] Failed to save message (${errorType}).`);
     return res.status(500).json({
       ok: false,
       message: 'Something went wrong saving your message. Please try again.',
